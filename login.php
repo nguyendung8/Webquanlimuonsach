@@ -3,6 +3,14 @@
    include 'config.php';
    session_start();
 
+   if(isset($user_id)){// session tồn tại => quay lại trang người dùng
+      $user_id = $_SESSION['user_id']; //tạo session người dùng thường
+      header('location:home.php');
+   } else if(isset($admin_id)){// session tồn tại => quay lại trang quản lý
+      $admin_id = $_SESSION['admin_id']; //tạo session admin
+      header('location:admin_products.php');
+   }
+
    if(isset($_POST['submit'])){//lấy thông tin đăng nhập từ form submit name='submit'
 
       $email = mysqli_real_escape_string($conn, $_POST['email']);
