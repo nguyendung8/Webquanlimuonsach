@@ -60,6 +60,19 @@
       .bookdetail-desc {
          margin-top: 20px;
          font-size: 16px;
+         margin-bottom: 20px;
+      }
+      .borrow-book:hover { 
+         opacity: 0.9;
+      }
+      .borrow-book {
+         padding: 5px 10px;
+         background-image: linear-gradient(to right, #ff9800, #F7695D);
+         border-radius: 4px;
+         cursor: pointer; 
+         font-size: 18px;
+         color: #fff;
+         font-weight: 700;
       }
    </style>
 </head>
@@ -93,6 +106,7 @@
                Mô tả: 
                <?php echo($bookItem['describes'])  ?>
             </p>
+            <a href="book_borrow.php?book_id=<?php echo $bookItem['id'] ?>" class="borrow-book" >Mượn sách</a>
          </div>
       </div>
    <?php else : ?>

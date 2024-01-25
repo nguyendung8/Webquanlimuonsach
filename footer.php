@@ -1,15 +1,16 @@
 <section class="footer">
 
    <div class="box-container">
-
+      <div class="box">
+      <a href="home.php" class="logo"><img width="120px" height="100px" src="./images/logo.png"></a>
+      <p class="text-footer">Thư viện mượn sách số 1 Hà Nội</p>
+      </div>
       <div class="box">
          <a href="home.php">Trang chủ</a>
-         <a href="about.php">Thông tin</a>
-         <!-- <a href="contact.php">Liên hệ</a> -->
-      </div>
-
-      <div class="box">
+         <a href="list_new_books.php">Sách mới</a>
+         <a href="search_page.php">Tìm kiếm</a>
          <!-- <a href="orders.php">Sách đã mượn</a> -->
+         <!-- <a href="contact.php">Liên hệ</a> -->
       </div>
 
       <div class="box">
