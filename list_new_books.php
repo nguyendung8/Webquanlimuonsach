@@ -29,16 +29,14 @@
         left: 10px;
         top: 5px;
       }
+      .box {
+         border: none !important;
+      }
    </style>
 </head>
 <body>
    
 <?php include 'header.php'; ?>
-
-<div class="heading">
-   <h3>Sách mới nhất</h3>
-   <p> <a href="home.php">Trang chủ</a> / Sách mới </p>
-</div>
 <section class="products">
 
    <h1 class="title">Danh sách sách mới nhất</h1>
@@ -67,7 +65,7 @@
 
 </section>
 
-<section class="home-contact">
+<!-- <section class="home-contact">
 
    <div class="content">
       <h3>Bạn có thắc mắc?</h3>
@@ -75,7 +73,7 @@
       <a href="contact.php" class="white-btn">Liên hệ</a>
    </div>
 
-</section>
+</section> -->
 
 <?php include 'footer.php'; ?>
 <script src="js/script.js"></script>

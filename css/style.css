@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600&display=swap');
 
 :root{
-   --purple:#8e44ad;
    --red:#c0392b;
    --orange:#f39c12;
    --black:#333;
@@ -140,7 +139,7 @@ section{
    align-items: center;
    justify-content: center;
    gap:1rem;
-   background: url(../images/heading-bg.webp) no-repeat;
+   background: url(../images/home_bg.jpg) no-repeat;
    background-size: cover;
    background-position: center;
    text-align: center;

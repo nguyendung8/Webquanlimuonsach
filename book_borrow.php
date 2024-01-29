@@ -67,7 +67,7 @@
       .bookdetail-title {
          font-size: 21px;
          padding-top: 10px;
-         color: #9e1ed4;
+         color: #3670EB !important;
       }
       .bookdetail-img {
          margin-top: 18px;
@@ -116,10 +116,6 @@
    
 <?php include 'header.php'; ?>
 
-<div class="heading">
-   <h3>Mượn sách</h3>
-   <p> <a href="home.php">Trang chủ</a> / Mượn sách </p>
-</div>
 
 <section class="view-book">
    <?php if ($bookItem) : ?>

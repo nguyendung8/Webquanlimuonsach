@@ -26,11 +26,11 @@
          <div class="icons">
             <div id="menu-btn" class="fas fa-bars"></div>
             <a href="search_page.php" class="fas fa-search"></a>
-            <div id="user-btn" class="fas fa-user"></div>
+            <div style="color: #3670EB !important;" id="user-btn" class="fas fa-user"></div>
          </div>
 
          <div style="z-index: 1000;" class="user-box">
-            <p>Tên người dùng : <span><?php echo $_SESSION['user_name']; ?></span></p>
+            <p><span style="color: #3670EB !important;"><?php echo $_SESSION['user_name']; ?></span></p>
             <a href="logout.php" class="delete-btn">Đăng xuất</a>
          </div>
       </div>

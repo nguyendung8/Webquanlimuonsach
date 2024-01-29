@@ -47,7 +47,7 @@
       .bookdetail-title {
          font-size: 21px;
          padding-top: 10px;
-         color: #9e1ed4;
+         color: #3670EB !important;
       }
       .bookdetail-img {
          margin-top: 18px;
@@ -74,16 +74,15 @@
          color: #fff;
          font-weight: 700;
       }
+      .head {
+         background: url(./images/home_bg.jpg) no-repeat;
+         background-size: cover;
+      }
    </style>
 </head>
 <body>
    
 <?php include 'header.php'; ?>
-
-<div class="heading">
-   <h3>Xem thông tin sách</h3>
-   <p> <a href="home.php">Trang chủ</a> / Xem thông tin sách </p>
-</div>
 
 <section class="view-book">
    <?php if ($bookItem) : ?>

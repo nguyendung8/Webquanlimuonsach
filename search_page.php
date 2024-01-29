@@ -23,16 +23,24 @@
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <link rel="stylesheet" href="./css/main.css">
    <link rel="stylesheet" href="css/style.css">
-
+   <style>
+      .box {
+         border: none !important;
+      }
+      .btn {
+         background-color: #3670EB !important;
+      }
+      /* .footer {
+         position: absolute;
+         bottom: 0;
+         left: 0;
+         width: 100%;
+      } */
+   </style>
 </head>
 <body>
    
 <?php include 'header.php'; ?>
-
-<div class="heading">
-   <h3>Trang tìm kiếm</h3>
-   <p> <a href="home.php">Trang chủ</a> / Tìm kiếm </p>
-</div>
 
 <section class="search-form">
    <form action="" method="post">

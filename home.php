@@ -28,9 +28,16 @@
          text-align: center;
          font-size: 20px;
          display: flex;
-         gap: 10px;
+         gap: 5px;
          justify-content: center;
-         padding-bottom: 20px;
+         border: 1px solid #3670EB;
+         align-items: center;
+         padding: 12px 16px;
+         width: fit-content;
+         border-radius: 4px;
+         margin: auto;
+         margin-bottom: 20px;
+         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 10px 0px;
       }
       .slideshow-container {
          position: relative;
@@ -55,7 +62,26 @@
          height: 485px;
          border-radius: 9px;
       }
-
+      .home{
+         min-height: 70vh;
+         background:linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url(./images/home_bg.jpg) no-repeat;
+         background-size: cover;
+         background-position: center;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+      }
+      .box {
+         border: none !important;
+      }
+      .cate_item {
+         color: #3670EB !important;
+         border-right: 1px solid;
+         padding-right: 5px;
+      }
+      .cate_item:last-child {
+         border-right: none;
+      }
    </style>
 </head>
 <body>
@@ -104,7 +130,7 @@
          if(mysqli_num_rows($select_categoriess) > 0){
             while($fetch_categoriess = mysqli_fetch_assoc($select_categoriess)){
       ?>
-                  <a href="?cate_id=<?php echo $fetch_categoriess['id']; ?> "><?php echo $fetch_categoriess['cate_name']; ?></a>
+                  <a class="cate_item" href="?cate_id=<?php echo $fetch_categoriess['id']; ?> "><?php echo $fetch_categoriess['cate_name']; ?></a>
       <?php
             }
          }else{
