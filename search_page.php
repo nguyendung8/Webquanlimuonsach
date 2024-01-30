@@ -30,12 +30,6 @@
       .btn {
          background-color: #3670EB !important;
       }
-      /* .footer {
-         position: absolute;
-         bottom: 0;
-         left: 0;
-         width: 100%;
-      } */
    </style>
 </head>
 <body>
