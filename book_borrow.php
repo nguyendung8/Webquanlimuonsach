@@ -34,7 +34,7 @@
 
       mysqli_query($conn, "INSERT INTO `borrows`(user_id, book_id, book_name, borrow_quantity, book_img, user_name, email, phone, placed_on) VALUES('$userId', '$book_id', '$book_name','$book_quantity', '$book_img', '$userName', '$email', '$phone', '$placed_on')") or die('query failed');
       $message[] = 'Mượn sách thành công!';
-      // header('location:home.php');
+      header('location:borrows.php');
    }
 ?>
 
