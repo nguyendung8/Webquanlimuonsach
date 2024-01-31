@@ -32,6 +32,9 @@
       .box {
          border: none !important;
       }
+      *::-webkit-scrollbar-thumb{
+         background-color: #3670EB !important;
+      }
    </style>
 </head>
 <body>

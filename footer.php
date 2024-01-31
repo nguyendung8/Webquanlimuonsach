@@ -15,8 +15,7 @@
          <a href="home.php">Trang chủ</a>
          <a href="list_new_books.php">Sách mới</a>
          <a href="search_page.php">Tìm kiếm</a>
-         <!-- <a href="orders.php">Sách đã mượn</a> -->
-         <!-- <a href="contact.php">Liên hệ</a> -->
+         <a href="orders.php">Sách đã mượn</a>
       </div>
 
       <div class="box">

@@ -49,6 +49,9 @@
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <link rel="stylesheet" href="css/style.css">
    <style>
+      *::-webkit-scrollbar-thumb{
+         background-color: #3670EB !important;
+      }
       .view-book {
          padding: 15px;
       }

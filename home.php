@@ -82,6 +82,9 @@
       .cate_item:last-child {
          border-right: none;
       }
+      *::-webkit-scrollbar-thumb{
+         background-color: #3670EB !important;
+      }
    </style>
 </head>
 <body>

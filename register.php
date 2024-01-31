@@ -83,6 +83,9 @@
          font-size: 20px;
          left: 9px;
       }
+      *::-webkit-scrollbar-thumb{
+         background-color: #3670EB !important;
+      }
    </style>
 </head>
 <body>

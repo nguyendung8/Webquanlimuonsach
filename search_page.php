@@ -30,6 +30,9 @@
       .btn {
          background-color: #3670EB !important;
       }
+      *::-webkit-scrollbar-thumb{
+         background-color: #3670EB !important;
+      }
    </style>
 </head>
 <body>

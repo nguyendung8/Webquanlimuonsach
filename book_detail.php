@@ -44,6 +44,9 @@
          background-color:#fff;
          text-align: center;
       }
+      *::-webkit-scrollbar-thumb{
+         background-color: #3670EB !important;
+      }
       .bookdetail-title {
          font-size: 21px;
          padding-top: 10px;

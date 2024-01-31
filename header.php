@@ -19,8 +19,8 @@
          <nav class="navbar">
             <a href="home.php">Trang chủ</a>
             <a href="list_new_books.php">Sách mới nhất</a>
-            <!-- <a href="contact.php">Liên hệ</a> -->
-            <!-- <a href="borrows.php">Đã mượn</a> -->
+            <a href="contact.php">CSKH</a>
+            <a href="borrows.php">Đã mượn</a>
          </nav>
 
          <div class="icons">

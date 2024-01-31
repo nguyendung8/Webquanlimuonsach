@@ -74,6 +74,9 @@
         color: #3670EB;
         font-size: 19px;
     }
+    *::-webkit-scrollbar-thumb{
+         background-color: #3670EB !important;
+      }
    </style>
 </head>
 <body>
