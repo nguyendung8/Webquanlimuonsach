@@ -10,7 +10,18 @@
       }
    }
 ?>
-
+<style>
+   .changepw-btn {
+      border-radius: 4px;
+      font-size: 20px;
+      background: #3670EB;
+      color: #fff;
+      padding: 7px 12px;
+   }
+   .changepw-btn:hover {
+      opacity: 0.7;
+   }
+</style>
 <header class="header">
 
    <div class="header-2">
@@ -31,7 +42,8 @@
 
          <div style="z-index: 1000;" class="user-box">
             <p><span style="color: #3670EB !important;"><?php echo $_SESSION['user_name']; ?></span></p>
-            <a href="logout.php" class="delete-btn">Đăng xuất</a>
+            <a href="change_password.php" class="changepw-btn">Đổi mật khẩu</a>
+            <a style="margin-top: 13px;" href="logout.php" class="delete-btn">Đăng xuất</a>
          </div>
       </div>
    </div>
