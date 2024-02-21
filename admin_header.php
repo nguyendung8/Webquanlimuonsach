@@ -25,13 +25,13 @@
 
       <a href="admin_page.php" class="logo"><img width="110px" height="80px" src="./images/logo.png"></a>
 
-      <nav class="navbar">
-         <a href="admin_products.php">Sách</a>
-         <a href="admin_category.php">Danh mục sách</a>
-         <a href="admin_borrows.php">Phiếu mượn</a>
-         <a href="admin_users.php">Người dùng</a></a>
-         <a href="admin_contacts.php">Tin nhắn</a>
-         <a href="admin_staticals.php">Thống kê</a>
+      <nav style="margin-bottom: 0px !important;min-height: unset !important;" class="navbar">
+         <a style="text-decoration: none !important;" href="admin_products.php">Sách</a>
+         <a style="text-decoration: none !important;" href="admin_category.php">Danh mục sách</a>
+         <a style="text-decoration: none !important;" href="admin_borrows.php">Phiếu mượn</a>
+         <a style="text-decoration: none !important;" href="admin_users.php">Người dùng</a></a>
+         <a style="text-decoration: none !important;" href="admin_contacts.php">Tin nhắn</a>
+         <a style="text-decoration: none !important;" href="admin_statistical.php">Thống kê</a>
       </nav>
 
       <div class="icons">
