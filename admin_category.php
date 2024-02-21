@@ -71,7 +71,7 @@
       }
       .box {
          border: 1px solid #3670EB !important;
-         background-color: unset !important;
+         background-color: #fff !important;
       }
       h1, h3 {
          color: #3670EB !important;

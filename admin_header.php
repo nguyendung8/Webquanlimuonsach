@@ -10,7 +10,15 @@
       }
    }
 ?>
-
+<style>
+   .header .flex .navbar a:hover{
+      color: #3670EB !important;
+   }
+   .account-box {
+      border: 1px solid #3670EB !important;
+      background-color: #fff !important;
+   }
+</style>
 <header class="header">
 
    <div style="padding: 0 2rem !important;" class="flex">
@@ -20,9 +28,10 @@
       <nav class="navbar">
          <a href="admin_products.php">Sách</a>
          <a href="admin_category.php">Danh mục sách</a>
-         <!-- <a href="admin_borrows.php">Phiếu mượn</a> -->
-         <!-- <a href="admin_users.php">Người dùng</a></a> -->
-         <!-- <a href="admin_contacts.php">Tin nhắn</a> -->
+         <a href="admin_borrows.php">Phiếu mượn</a>
+         <a href="admin_users.php">Người dùng</a></a>
+         <a href="admin_contacts.php">Tin nhắn</a>
+         <a href="admin_staticals.php">Thống kê</a>
       </nav>
 
       <div class="icons">
@@ -31,7 +40,7 @@
       </div>
 
       <div class="account-box">
-         <p><span><?php echo $_SESSION['admin_name']; ?></span></p>
+         <p><span style="color: #3670EB !important;"><?php echo $_SESSION['admin_name']; ?></span></p>
          <a href="logout.php" class="delete-btn">Đăng xuất</a>
       </div>
 
