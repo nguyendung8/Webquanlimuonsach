@@ -59,7 +59,7 @@
    <div class="box">
       <p> Id người dùng : <span><?php echo $fetch_message['user_id']; ?></span> </p>
       <p> Tên : <span><?php echo $fetch_message['name']; ?></span> </p>
-      <p> Số điện thoại : <span><?php echo $fetch_message['number']; ?></span> </p>
+      <!-- <p> Số điện thoại : <span><?php echo $fetch_message['number']; ?></span> </p> -->
       <p> Email : <span><?php echo $fetch_message['email']; ?></span> </p>
       <p> Tin nhắn : <span><?php echo $fetch_message['message']; ?></span> </p>
       <a href="admin_contacts.php?delete=<?php echo $fetch_message['id']; ?>" onclick="return confirm('delete this message?');" class="delete-btn">Xóa tin nhắn</a>
