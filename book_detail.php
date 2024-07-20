@@ -101,11 +101,15 @@
                <?php echo ($bookItem['author']) ?>
             </p>
             <p class="bookdetail-author">
+               Nhà xuất bản: 
+               <?php echo ($bookItem['publisher']) ?>
+            </p>
+            <p class="bookdetail-author">
                Số lượng còn: 
                <?php echo ($bookItem['quantity']) ?> quyển
             </p>
             <p class="bookdetail-desc">
-               Mô tả: 
+               Mô tả vật lý: 
                <?php echo($bookItem['describes'])  ?>
             </p>
             <a href="book_borrow.php?book_id=<?php echo $bookItem['id'] ?>" class="borrow-book" >Mượn sách</a>

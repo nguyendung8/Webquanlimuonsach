@@ -4,20 +4,20 @@
    session_start();
 
    if(isset($_POST['submit'])) {
-        $email =  mysqli_real_escape_string($conn, $_POST['email']);
+        $mssv =  mysqli_real_escape_string($conn, $_POST['mssv']);
         $new_password =  mysqli_real_escape_string($conn, md5($_POST['new_password']));
 
-        $checkEmail = "SELECT * from users where email = '".$email."'";
-        $result = $conn->query($checkEmail);
+        $checkmssv = "SELECT * from users where mssv = '".$mssv."'";
+        $result = $conn->query($checkmssv);
 
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $user_id = $row['id'];
-            $email_origin = $row['email'];
+            $mssv_origin = $row['mssv'];
     
-            // Kiểm tra email có tồn tại trong hệ thống không
-            if ($email === $email_origin) {
-                // Emaill có tồn tại , cập nhật mật khẩu mới
+            // Kiểm tra mssv có tồn tại trong hệ thống không
+            if ($mssv === $mssv_origin) {
+                // mssv có tồn tại , cập nhật mật khẩu mới
                 $updatePasswordQuery = "UPDATE users SET password = '$new_password' WHERE id = $user_id";
                 
                 if ($conn->query($updatePasswordQuery) === TRUE) {
@@ -26,7 +26,7 @@
                     $message[] = 'Cập nhật mật khẩu không thành công';
                 }
             } else {
-                $message[] = 'Email không tồn tại trên hệ thống, vui lòng nhập lại';
+                $message[] = 'Mssv không tồn tại trên hệ thống, vui lòng nhập lại';
             }
         } else {
             $message[] = 'Không tìm thấy người dùng';
@@ -97,8 +97,8 @@
     <h1 class="cp-title">Quên mật khẩu</h1>
     <form method="POST">
     <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" class="form-control" placeholder="Nhập email..." required>
+        <label>Mã số sinh viên</label>
+        <input type="text" name="mssv" class="form-control" placeholder="Nhập mssv..." required>
     </div>
     <div class="form-group">
         <label>Mật khẩu mới</label>

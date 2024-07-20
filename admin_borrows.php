@@ -12,23 +12,26 @@
    
    // Click duyệt
    if(isset($_POST['confirmed'])) {
-      $book_id = $_POST['book_id'];
-      
-      // Lấy thông tin sách
-      $sql = "SELECT * FROM books WHERE id = $book_id";
-      $result = $conn->query($sql);
-      $bookItem = $result->fetch_assoc();
-      $book_current_quantity = $bookItem['quantity'];
-
-      $book_quantity = $_POST['book_quantity'];
       $borrow_id = $_POST['borrow_id'];
-      if($book_current_quantity >= $book_quantity) {
-         mysqli_query($conn, "UPDATE books SET quantity = quantity - $book_quantity WHERE id = $book_id;") or die('query failed');
-         mysqli_query($conn1, "UPDATE borrows SET borrows.is_confirmed = 1 WHERE borrows.id = $borrow_id;") or die('query failed');
-         $message[] = 'Duyệt sách thành công!';
-      } else {
-         $message[] = 'Số lượng sách này ở trong kho hiện tại không đủ, hãy nhập thêm sách!';
+
+      // Truy vấn để lấy thông tin sách trong phiếu mượn
+      $sql = "SELECT book_id, quantity FROM borrow_book WHERE borrow_id = '$borrow_id'";
+      $result = mysqli_query($conn, $sql) or die('query failed');
+
+      while ($row = mysqli_fetch_assoc($result)) {
+         $book_id = $row['book_id'];
+         $borrowed_quantity = $row['quantity'];
+ 
+         // Cập nhật số lượng sách trong bảng books
+         $update_sql = "UPDATE books SET quantity = quantity - $borrowed_quantity WHERE id = '$book_id'";
+         mysqli_query($conn, $update_sql) or die('query failed');
+
+         // Cập nhật trạng thái phiếu mượn
+         $update_sql = "UPDATE borrows SET is_confirmed = 1 WHERE id = '$borrow_id'";
+         mysqli_query($conn, $update_sql) or die('query failed');
       }
+   
+      $message[] = 'Duyệt sách thành công!';
    }
 
 ?>
@@ -77,21 +80,48 @@
    <h1 class="title">Phiếu mượn</h1>
    <div class="box-container">
       <?php
-         $select_orders = mysqli_query($conn, "SELECT * FROM `borrows`") or die('query failed');
-         if(mysqli_num_rows($select_orders) > 0){
-            while($fetch_borrows = mysqli_fetch_assoc($select_orders)){
-      ?>
-               <div style="text-align: center;" class="box">
-                  <p> User id : <span><?php echo $fetch_borrows['user_id']; ?></span> </p>
-                  <p> Tên : <span><?php echo $fetch_borrows['user_name']; ?></span> </p>
-                  <p> Email : <span><?php echo $fetch_borrows['email']; ?></span> </p>
-                  <p> Số điện thoại : <span><?php echo $fetch_borrows['phone']; ?></span> </p>
-                  <p> Tên sách : <span><?php echo $fetch_borrows['book_name']; ?></span> </p>
-                  <p> Số lượng mượn : <span><?php echo $fetch_borrows['borrow_quantity']; ?> quyển</span> </p>
-                  <img width="180px" height="207px" src="uploaded_img/<?php echo $fetch_borrows['book_img']; ?>" alt="">
+         $sql = "SELECT borrows.user_id, borrows.id AS borrow_id, borrows.placed_on, books.id AS book_id, books.name, borrow_book.quantity, borrows.is_confirmed
+         FROM borrows
+         JOIN borrow_book ON borrows.id = borrow_book.borrow_id
+         JOIN books ON borrow_book.book_id = books.id
+         ORDER BY borrows.placed_on DESC";
+         $result = mysqli_query($conn, $sql) or die('query failed');
+         $borrows = [];
+         while ($row = mysqli_fetch_assoc($result)) {
+            $borrow_id = $row['borrow_id'];
+            if (!isset($borrows[$borrow_id])) {
+               $borrows[$borrow_id] = [
+                     'placed_on' => $row['placed_on'],
+                     'user_id' => $row['user_id'],
+                     'quantity' => $row['quantity'],
+                     'is_confirmed' => $row['is_confirmed'],
+                     'books' => []
+               ];
+            }
+            $borrows[$borrow_id]['books'][] = [
+               'book_id' => $row['book_id'],
+               'name' => $row['name'],
+            ];
+         }
+         if(!empty($borrows)){
+            foreach ($borrows as $borrow_id => $borrow) {
+               ?>
+               <div style="text-align: center; height: -webkit-fill-available;" class="box">
+                  <p> Phiếu mượn ID: : <span><?php echo $borrow_id; ?></span> </p>
+                  <?php
+                  $user_id = $borrow['user_id'];
+                     $fetch_user = mysqli_query($conn, "SELECT * FROM users WHERE id = $user_id") or die('query failed');
+                     $user = mysqli_fetch_assoc($fetch_user);
+                  ?>
+                  <p> MSSV : <span><?php echo $user['mssv']; ?></span> </p>
+                  <?php
+                     foreach ($borrow['books'] as $book) {
+                        echo "<p>" . " Tên sách: " . $book['name']  . " - " . "Số lượng: " . $borrow['quantity'] . "</p>"  . "<br>";
+                     }
+                  ?>
                   <p style="margin-top: 10px;"> Trạng thái  : 
-                     <span style="color:<?php if($fetch_borrows['is_confirmed'] == 1){ echo 'green !important'; }else if($fetch_borrows['is_confirmed'] == '0'){ echo 'red !important'; }else{ echo 'orange !important'; } ?>;">
-                        <?php if ($fetch_borrows['is_confirmed'] == 1) {
+                     <span style="color:<?php if($borrow['is_confirmed'] == 1){ echo 'green !important'; }else if($borrow['is_confirmed'] == '0'){ echo 'red !important'; }else{ echo 'orange !important'; } ?>;">
+                        <?php if ($borrow['is_confirmed'] == 1) {
                               echo 'Đã duyệt';
                            } else {
                               echo 'Chờ xử lý';
@@ -100,16 +130,14 @@
                      </span> 
                   </p>
                   <form action="" method="post">
-                     <input type="hidden" name="book_id" value="<?php echo $fetch_borrows['book_id'] ?>">
-                     <input type="hidden" name="book_quantity" value="<?php echo $fetch_borrows['borrow_quantity'] ?>">
-                     <input type="hidden" name="borrow_id" value="<?php echo $fetch_borrows['id'] ?>">
-                     <input style="background:<?php if($fetch_borrows['is_confirmed'] == 1){ echo '#12c811c7'; } else{ echo 'red'; } ?>;" class="confirm-btn" type="submit" value=" <?php if ($fetch_borrows['is_confirmed'] == 1) {echo 'Đã duyệt'; } else { echo 'Duyệt';}  ?>" name="confirmed" <?php if($fetch_borrows['is_confirmed'] == 1) echo 'disabled' ?> >
+                     <input type="hidden" name="borrow_id" value="<?php echo $borrow_id ?>">
+                     <input style="background:<?php if($borrow['is_confirmed'] == 1){ echo '#12c811c7'; } else{ echo 'red'; } ?>;" class="confirm-btn" type="submit" value=" <?php if ($borrow['is_confirmed'] == 1) {echo 'Đã duyệt'; } else { echo 'Duyệt';}  ?>" name="confirmed" <?php if($borrow['is_confirmed'] == 1) echo 'disabled' ?> >
                   </form>
                </div>
       <?php
             }
          }else{
-            echo '<p class="empty">Không có đơn đặt hàng nào!</p>';
+            echo '<p class="empty">Không có đơn phiếu mượn nào!</p>';
          }
       ?>
    </div>

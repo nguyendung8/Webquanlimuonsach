@@ -13,10 +13,10 @@
 
    if(isset($_POST['submit'])){//lấy thông tin đăng nhập từ form submit name='submit'
 
-      $email = mysqli_real_escape_string($conn, $_POST['email']);
+      $mssv = mysqli_real_escape_string($conn, $_POST['mssv']);
       $pass = mysqli_real_escape_string($conn, md5($_POST['password']));
 
-      $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE email = '$email' AND password = '$pass'") or die('query failed');
+      $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE mssv = '$mssv' AND password = '$pass'") or die('query failed');
 
       if(mysqli_num_rows($select_users) > 0){//kiểm tra tài khoản có tồn tại không
 
@@ -26,23 +26,22 @@
          if($row['user_type'] == 'admin'){
 
             $_SESSION['admin_name'] = $row['name'];
-            $_SESSION['admin_email'] = $row['email'];
+            $_SESSION['admin_mssv'] = $row['mssv'];
             $_SESSION['admin_id'] = $row['id'];
             header('location:admin_products.php');
 
          }elseif($row['user_type'] == 'user'){
 
             $_SESSION['user_name'] = $row['name'];
-            $_SESSION['user_email'] = $row['email'];
+            $_SESSION['user_mssv'] = $row['mssv'];
             $_SESSION['user_id'] = $row['id'];
             // Cập nhật login
-            mysqli_query($conn, "UPDATE users SET is_logged_in = 1 WHERE id = $user_id") or die('query failed');
             header('location:home.php');
 
          }
 
       }else{
-         $message[] = 'Email hoặc mật khẩu không chính xác!';
+         $message[] = 'Mssv hoặc mật khẩu không chính xác!';
       }
 
    }
@@ -127,7 +126,7 @@ if(isset($message)){
       <h3 class="title">Đăng nhập</h3>
       <div style="position: relative;">
          <i class="fa fa-user-circle-o user-icon" aria-hidden="true"></i>
-         <input type="email" name="email" placeholder="Email" required class="box">
+         <input type="text" name="mssv" placeholder="Mã số sinh viên" required class="box">
       </div>
       <div style="position: relative;">
          <i class="fa fa-lock lock-icon" aria-hidden="true"></i>
@@ -135,7 +134,6 @@ if(isset($message)){
       </div>
       <a class="forget-btn" href="forget_password.php">Quên mật khẩu</a>
       <input type="submit" name="submit" value="Đăng nhập" class="btn">
-      <p>Bạn chưa có tài khoản? <a style="text-decoration: none;" href="register.php">Đăng ký</a></p>
    </form>
 
 </div>

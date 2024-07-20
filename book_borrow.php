@@ -23,18 +23,29 @@
 
    // Lúc click vào nút mượn
    if(isset($_POST['submit'])) {
-      $userName = $user['name'];
-      $userId = $user_id;
-      $book_name = $bookItem['name'];
-      $book_img = $bookItem['image'];
-      $book_quantity = $_POST['quantity'];
-      $email = mysqli_real_escape_string($conn, $_POST['email']);
-      $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-      $placed_on = date('d-m-Y');
+      $product_name = $_POST['product_name'];
+      $product_image = $_POST['product_image'];
+      $product_quantity = $_POST['quantity'];
+      $book_id = $bookItem['id'];
 
-      mysqli_query($conn, "INSERT INTO `borrows`(user_id, book_id, book_name, borrow_quantity, book_img, user_name, email, phone, placed_on) VALUES('$userId', '$book_id', '$book_name','$book_quantity', '$book_img', '$userName', '$email', '$phone', '$placed_on')") or die('query failed');
-      $message[] = 'Mượn sách thành công!';
-      header('location:borrows.php');
+      $select_quantity = mysqli_query($conn, "SELECT * FROM `books` WHERE name='$product_name'");
+      $fetch_quantity = mysqli_fetch_assoc($select_quantity);
+      if($product_quantity > $fetch_quantity['quantity']){
+         $message[] = 'Số lượng sách còn lại trong kho không đủ!';
+      }
+      else{
+         $check_cart_numbers = mysqli_query($conn, "SELECT * FROM `cart` WHERE name = '$product_name' AND user_id = '$user_id'") or die('query failed');
+
+         if(mysqli_num_rows($check_cart_numbers) > 0) { //kiểm tra sách có trong giỏ hàng chưa và tăng số lượng
+            $result=mysqli_fetch_assoc($check_cart_numbers);
+            $num = $result['quantity'] + $product_quantity;
+            mysqli_query($conn, "UPDATE `cart` SET quantity='$num' WHERE name = '$product_name' AND user_id = '$user_id'");
+            $message[] = 'Sách đã có trong giỏ và đã được thêm số lượng!';
+         } else {
+            mysqli_query($conn, "INSERT INTO `cart`(book_id, user_id, name, quantity, image) VALUES('$book_id', '$user_id', '$product_name', '$product_quantity', '$product_image')") or die('query failed');
+            $message[] = 'Sách đã được thêm vào giỏ!';
+         }
+      }
    }
 ?>
 
@@ -140,18 +151,12 @@
                <div class="borrow-input">
                   <div class="form-item">
                      <label for="">Số lượng mượn: </label>
-                     <input style="" type="number" max="<?php echo $bookItem['quantity']; ?>" min="<?=($bookItem['quantity']>0) ? 1:0 ?>" name="quantity" placeholder="Nhập số lượng mượn" required>
+                     <input style="" type="number" min="<?=($bookItem['quantity']>0) ? 1:0 ?>" name="quantity" placeholder="Nhập số lượng mượn" required>
                   </div>
                </div>
-               <div style="margin-left: 74px;" class="form-item">
-                  <label for="">Email: </label>
-                  <input type="email" name="email" id="" placeholder="Nhập email" required>
-               </div>
-               <div  style="margin-left: 17px;" class="form-item">
-                  <label for="">Số điện thoại: </label>
-                  <input type="text" min="10" max="10" name="phone" id="" placeholder="Nhập số điện thoại" required>
-               </div>
-            <input class="borrow-btn" name="submit" type="submit" value="Mượn sách">
+               <input type="hidden" name="product_name" value="<?php echo $bookItem['name']; ?>">
+               <input type="hidden" name="product_image" value="<?php echo $bookItem['image']; ?>">
+            <input class="borrow-btn" name="submit" type="submit" value="Thêm vào giỏ">
          </div>
       </form>
    <?php else : ?>

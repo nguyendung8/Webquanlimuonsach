@@ -41,7 +41,7 @@
 
 <section class="search-form">
    <form action="" method="post">
-      <input type="text" name="search" placeholder="Tìm truyện..." class="box"  value=" <?php if(isset($_POST['submit'])) echo($_POST['search'])?>">
+      <input type="text" name="search" placeholder="Tìm sách..." class="box"  value=" <?php if(isset($_POST['submit'])) echo($_POST['search'])?>">
       <input type="submit" name="submit" value="Tìm kiếm" class="btn">
    </form>
 </section>
@@ -56,7 +56,7 @@
             if(mysqli_num_rows($select_products) > 0){
                while($fetch_products = mysqli_fetch_assoc($select_products)){
       ?>
-                  <form action="" method="post" class="box">
+                  <form style="height: -webkit-fill-available;" action="" method="post" class="box">
                      <img width="180px" height="207px" src="uploaded_img/<?php echo $fetch_products['image']; ?>" alt="">
                      <div class="name"><?php echo $fetch_products['name']; ?></div>
                      <div class="name"><?php echo $fetch_products['describes']; ?></div>

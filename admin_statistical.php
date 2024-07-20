@@ -18,6 +18,14 @@
             $out_of_stock[] = $row;
         }
     }
+    $sql = "SELECT * FROM books WHERE quantity < 10 AND quantity > 0";
+    $result = $conn->query($sql);
+    $out = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $out[] = $row;
+            }
+        }
 
 ?>
 <!DOCTYPE html>
@@ -41,7 +49,10 @@
         }
         h1 {
          color: #3670EB !important;
-      }
+        }
+        th, td {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +60,33 @@
 <?php include 'admin_header.php'; ?>
     <h1 style="margin-top: 25px;" class="title">Thống kê</h1>
    <div class="out_of_stock">
+   <h1 class="statis_title">Thống kê sách còn ít trong kho</h1>
+    <?php if (count($out) > 0): ?>
+      <div class="table-responsive card mt-2">
+          <table style="width: 80% !important; margin: auto;" class="table table-bordered statistical_table">
+              <tr>
+                  <th>ID</th>
+                  <th>Tên sách</th>
+                  <th>Số lượng còn</th>
+              </tr>
+				<?php foreach ($out as $item): ?>
+					<tr>
+						<td>
+							<label style="width: auto"><?php echo $item['id']?></label>
+						</td>
+						<td>
+							<label style="width: auto"><?php echo $item['name']; ?></label>
+						</td>
+						<td>
+							<label style="width: auto"><?php echo $item['quantity']; ?></label>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+          	</table>
+      	</div>
+    <?php else: ?>
+        <p class="alert alert-danger">Danh sách trống</p>
+    <?php endif; ?>
    <h1 class="statis_title">Thống kê sách đã hết trong kho</h1>
     <?php if (count($out_of_stock) > 0): ?>
       <div class="table-responsive card mt-2">
@@ -56,7 +94,6 @@
               <tr>
                   <th>ID</th>
                   <th>Tên sách</th>
-                  <th>Mô tả</th>
                   <th>Số lượng còn</th>
               </tr>
 				<?php foreach ($out_of_stock as $item): ?>
@@ -66,9 +103,6 @@
 						</td>
 						<td>
 							<label style="width: auto"><?php echo $item['name']; ?></label>
-						</td>
-						<td>
-							<label style="width: auto"><?php echo $item['describes']; ?></label>
 						</td>
 						<td>
 							<label style="width: auto"><?php echo $item['quantity']; ?></label>
@@ -81,10 +115,6 @@
         <p class="alert alert-danger">Danh sách trống</p>
     <?php endif; ?>
    </div>
-
-
-
-
 
 
 

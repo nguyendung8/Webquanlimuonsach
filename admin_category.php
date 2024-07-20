@@ -108,7 +108,7 @@
          if(mysqli_num_rows($select_categorys) > 0){
             while($fetch_categorys = mysqli_fetch_assoc($select_categorys)){
       ?>
-      <div class="box">
+      <div style="height: -webkit-fill-available;" class="box">
          <div class="name"><?php echo $fetch_categorys['cate_name']; ?></div>
          <a href="admin_category.php?update=<?php echo $fetch_categorys['id']; ?>" class="option-btn">Cập nhật</a>
          <a href="admin_category.php?delete=<?php echo $fetch_categorys['id']; ?>" class="delete-btn" onclick="return confirm('Xóa danh mục này?');">Xóa</a>
@@ -116,7 +116,7 @@
       <?php
          }
       }else{
-         echo '<p class="empty">Không có thể loại truyện nào được thêm!</p>';  
+         echo '<p class="empty">Không có thể loại sách nào được thêm!</p>';  
       }
       ?>
    </div>

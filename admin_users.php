@@ -58,17 +58,16 @@
 
 <section class="users">
 
-   <h1 class="title"> Tài khoản người dùng </h1>
+   <h1 class="title"> Tài khoản sinh viên </h1>
 
    <div class="box-container">
       <?php
          $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE user_type = 'user'") or die('query failed');
          while($fetch_users = mysqli_fetch_assoc($select_users)){
       ?>
-      <div class="box">
-         <p> Id người dùng : <span><?php echo $fetch_users['id']; ?></span> </p>
-         <p> Tên người dùng : <span><?php echo $fetch_users['name']; ?></span> </p>
-         <p> Email : <span><?php echo $fetch_users['email']; ?></span> </p>
+      <div style="height: -webkit-fill-available;" class="box">
+         <p> Mã số sinh viên : <span><?php echo $fetch_users['mssv']; ?></span> </p>
+         <p> Tên sinh viên : <span><?php echo $fetch_users['name']; ?></span> </p>
       <?php
          if($fetch_users['user_type'] == 'admin'){
       ?>

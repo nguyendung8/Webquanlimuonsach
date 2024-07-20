@@ -54,20 +54,44 @@
    <div class="borrow-container">
 
       <?php
-         $order_query = mysqli_query($conn, "SELECT * FROM `borrows` WHERE user_id = '$user_id'") or die('query failed');
-         if(mysqli_num_rows($order_query) > 0){
-            while($fetch_borrows = mysqli_fetch_assoc($order_query)){
+         $sql = "SELECT borrows.id AS borrow_id, borrows.placed_on, borrows.is_confirmed, books.id AS book_id, borrow_book.quantity, books.name
+         FROM borrows
+         JOIN borrow_book ON borrows.id = borrow_book.borrow_id
+         JOIN books ON borrow_book.book_id = books.id
+         WHERE borrows.user_id = '$user_id'
+         ORDER BY borrows.id DESC";
+         $result = mysqli_query($conn, $sql);
+         $borrows = [];
+         while ($row = mysqli_fetch_assoc($result)) {
+            $borrow_id = $row['borrow_id'];
+            if (!isset($borrows[$borrow_id])) {
+               $borrows[$borrow_id] = [
+                     'placed_on' => $row['placed_on'],
+                     'is_confirmed' => $row['is_confirmed'],
+                     'quantity' => $row['quantity'],
+                     'books' => []
+               ];
+            }
+            $borrows[$borrow_id]['books'][] = [
+               'book_id' => $row['book_id'],
+               'name' => $row['name'],
+            ];
+         }
+
+         if (!empty($borrows)) {
+            foreach ($borrows as $borrow_id => $borrow) {
       ?>
-      <div class="borrow-box">
-         <p> Tên : <span><?php echo $fetch_borrows['user_name']; ?></span> </p>
-         <p> Email : <span><?php echo $fetch_borrows['email']; ?></span> </p>
-         <p> Số điện thoại : <span><?php echo $fetch_borrows['phone']; ?></span> </p>
-         <p> Tên sách : <span><?php echo $fetch_borrows['book_name']; ?></span> </p>
-         <img width="180px" height="207px" src="uploaded_img/<?php echo $fetch_borrows['book_img']; ?>" alt="">
-         <p> Số lượng mượn : <span><?php echo $fetch_borrows['borrow_quantity']; ?> quyển</span> </p>
+      <div style="height: -webkit-fill-available;" class="borrow-box">
+         <p> ID phiếu mượn : <span><?php echo $borrow_id; ?></span> </p>
+         <?php
+            foreach ($borrow['books'] as $book) {
+               echo " Tên sách: " . $book['name']  . " - " . "Số lượng: " . $borrow['quantity']  . "<br>";
+            }
+         ?>
+         <p>Ngày mượn: <span><?php echo $borrow['placed_on']; ?></span></p>
          <p> Trạng thái  : 
-            <span style="color:<?php if($fetch_borrows['is_confirmed'] == 1){ echo 'green'; }else if($fetch_borrows['is_confirmed'] == '0'){ echo 'red'; }else{ echo 'orange'; } ?>;">
-               <?php if ($fetch_borrows['is_confirmed'] == 1) {
+            <span style="color:<?php if($borrow['is_confirmed'] == 1){ echo 'green'; }else if($borrow['is_confirmed'] == '0'){ echo 'red'; }else{ echo 'orange'; } ?>;">
+               <?php if ($borrow['is_confirmed'] == 1) {
                      echo 'Đã duyệt';
                   } else {
                      echo 'Chờ xử lý';
@@ -79,7 +103,7 @@
       <?php
        }
       }else{
-         echo '<p class="empty">Chưa có đơn hàng được đặt!</p>';
+         echo '<p class="empty">Chưa có sách được mượn!</p>';
       }
       ?>
    </div>

@@ -96,30 +96,18 @@
    <div class="content">
       <div class="slideshow-container">
          <div class="slide fade">
-            <img src="./images/slide1.jpg" alt="slide 1">
+            <img src="./images/slider1.png" alt="slide 1">
          </div>
          <div class="slide fade">
-            <img src="./images/slide2.jpg" alt="slide 2">
+            <img src="./images/slider2.png" alt="slide 2">
          </div>
          <div class="slide fade">
-            <img src="./images/slide3.jpg" alt="slide 3">
+            <img src="./images/slider3.jpg" alt="slide 3">
          </div>
          <div class="slide fade">
-            <img src="./images/slide4.jpg" alt="slide 3">
-         </div>
-         <div class="slide fade">
-            <img src="./images/slide5.jpg" alt="slide 3">
-         </div>
-         <div class="slide fade">
-            <img src="./images/slide6.jpg" alt="slide 3">
-         </div>
-         <div class="slide fade">
-            <img src="./images/slide7.jpg" alt="slide 3">
+            <img src="./images/slider4.jpg" alt="slide 3">
          </div>
       </div>
-      <!-- <h3>Mỗi ngày một quyển sách.</h3>
-      <p>Những quyển sách đều mang trong mình những bài học ý nghĩa, những trải nghiệm đáng giá.</p>
-      <a href="about.php" class="white-btn">Khám phá thêm</a> -->
    </div>
 
 </section>
@@ -152,7 +140,7 @@
          if(mysqli_num_rows($select_products) > 0){
             while($fetch_products = mysqli_fetch_assoc($select_products)){
       ?>
-         <form action="" method="post" class="box">
+         <form style="height: -webkit-fill-available;" action="" method="post" class="box">
             <img width="180px" height="207px" src="uploaded_img/<?php echo $fetch_products['image']; ?>" alt="">
             <div class="name"><?php echo $fetch_products['name']; ?></div>
             <div class="book-action">
@@ -169,16 +157,6 @@
    </div>
 
 </section>
-
-<!-- <section class="home-contact">
-
-   <div class="content">
-      <h3>Bạn có thắc mắc?</h3>
-      <p>Hãy để lại những điều bạn còn thắc mắc, băn khoăn hay muốn chia sẻ thêm về những quyển truyện cho chúng mình tại đây để chúng mình có thể giải đáp giúp bạn</p>
-      <a href="contact.php" class="white-btn">Liên hệ</a>
-   </div>
-
-</section> -->
 
 <?php include 'footer.php'; ?>
 <script src="js/script.js"></script>

@@ -14,6 +14,7 @@
 
       $name = mysqli_real_escape_string($conn, $_POST['name']);
       $author = mysqli_real_escape_string($conn, $_POST['author']);
+      $publisher = mysqli_real_escape_string($conn, $_POST['publisher']);
       $category = mysqli_real_escape_string($conn, $_POST['category']);
       $quantity = $_POST['quantity'];
       $describe = $_POST['describe'];
@@ -27,7 +28,7 @@
       if(mysqli_num_rows($select_product_name) > 0){
          $message[] = 'Sách đã tồn tại.';
       }else{//chưa thì thêm mới
-         $add_product_query = mysqli_query($conn, "INSERT INTO `books`(name, author, cate_id, quantity, describes, image) VALUES('$name', '$author', '$category', '$quantity', '$describe', '$image')") or die('query failed');
+         $add_product_query = mysqli_query($conn, "INSERT INTO `books`(name, author, publisher, cate_id, quantity, describes, image) VALUES('$name', '$author', '$publisher', '$category', '$quantity', '$describe', '$image')") or die('query failed');
          if($add_product_query){
             if($image_size > 2000000){//kiểm tra kích thước ảnh
                $message[] = 'Kích tước ảnh quá lớn, hãy cập nhật lại ảnh!';
@@ -109,6 +110,7 @@
       <h3>Thêm sách</h3>
       <input type="text" name="name" class="box" placeholder="Tên sách" required>
       <input type="text" name="author" class="box" placeholder="Tác giả" required>
+      <input type="text" name="publisher" class="box" placeholder="Nhà xuất bản" required>
       <select name="category" class="box">
          <?php
             $select_category= mysqli_query($conn, "SELECT * FROM `categories`") or die('Query failed');
@@ -123,7 +125,7 @@
          ?>
       </select>
       <input type="number" min="1" name="quantity" class="box" placeholder="Số lượng" required>
-      <input type="text" name="describe" class="box" placeholder="Mô tả" required>
+      <input type="text" name="describe" class="box" placeholder="Mô tả vật lý" required>
       <input type="file" name="image" accept="image/jpg, image/jpeg, image/png" class="box" required>
       <input type="submit" value="Thêm" name="add_product" class="btn">
    </form>
@@ -139,7 +141,7 @@
          if(mysqli_num_rows($select_products) > 0){
             while($fetch_products = mysqli_fetch_assoc($select_products)){
       ?>
-               <div class="box">
+               <div style="height: -webkit-fill-available;" class="box">
                   <img width="180px" height="207px" src="uploaded_img/<?php echo $fetch_products['image']; ?>" alt="">
                   <div class="name"><?php echo $fetch_products['name']; ?></div>
                   <a href="admin_products.php?update=<?php echo $fetch_products['id']; ?>" class="option-btn">Cập nhật</a>
@@ -148,7 +150,7 @@
       <?php
             }
       }else{
-         echo '<p class="empty">Không có truyện nào được thêm!</p>';
+         echo '<p class="empty">Không có sách nào được thêm!</p>';
       }
       ?>
    </div>
@@ -167,7 +169,7 @@
                <form action="" method="post" enctype="multipart/form-data">
                   <input type="hidden" name="update_p_id" value="<?php echo $fetch_update['id']; ?>">
                   <img src="uploaded_img/<?php echo $fetch_update['image']; ?>" alt="">
-                  <input type="text" name="update_name" value="<?php echo $fetch_update['name']; ?>" class="box" required placeholder="Tên truyện">
+                  <input type="text" name="update_name" value="<?php echo $fetch_update['name']; ?>" class="box" required placeholder="Tên sách">
                   <input type="text" name="update_author" value="<?php echo $fetch_update['author']; ?>" class="box" required placeholder="Tác giả">
                   <select name="update_category" class="box">
                      <?php
@@ -189,8 +191,8 @@
                         }
                      ?>
                   </select>
-                  <input type="number" name="update_quantity" value="<?php echo $fetch_update['quantity']; ?>" min="0" class="box" required placeholder="Số lượng truyện">
-                  <input type="text" name="update_describe" value="<?php echo $fetch_update['describes']; ?>" class="box" required placeholder="Mô tả">
+                  <input type="number" name="update_quantity" value="<?php echo $fetch_update['quantity']; ?>" min="0" class="box" required placeholder="Số lượng sách">
+                  <input type="text" name="update_describe" value="<?php echo $fetch_update['describes']; ?>" class="box" required placeholder="Mô tả vật lý">
                   <input type="submit" value="update" name="update_product" class="btn">
                   <input type="reset" value="cancel" id="close-update" class="option-btn">
                </form>

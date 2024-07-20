@@ -23,7 +23,7 @@
 
    <div style="padding: 0 2rem !important;" class="flex">
 
-      <a href="admin_page.php" class="logo"><img width="110px" height="80px" src="./images/logo.png"></a>
+      <a href="admin_page.php" class="logo"><img width="110px" height="80px" src="./images/logotv.png"></a>
 
       <nav style="margin-bottom: 0px !important;min-height: unset !important;" class="navbar">
          <a style="text-decoration: none !important;" href="admin_products.php">Sách</a>

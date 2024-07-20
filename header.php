@@ -26,18 +26,24 @@
 
    <div class="header-2">
       <div style="padding: 0 2rem;" class="flex">
-      <a href="home.php" class="logo"><img width="120px" height="100px" src="./images/logo.png"></a>
+      <a href="home.php" class="logo"><img width="120px" height="100px" src="./images/logotv.png"></a>
          <nav class="navbar">
             <a href="home.php">Trang chủ</a>
             <a href="list_new_books.php">Sách mới nhất</a>
-            <a href="contact.php">CSKH</a>
+            <a href="contact.php">Liên hệ</a>
             <a href="borrows.php">Đã mượn</a>
+            <a href="pays.php">Thanh toán</a>
          </nav>
 
          <div class="icons">
             <div id="menu-btn" class="fas fa-bars"></div>
             <a href="search_page.php" class="fas fa-search"></a>
             <div style="color: #3670EB !important;" id="user-btn" class="fas fa-user"></div>
+            <?php
+               $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
+               $cart_rows_number = mysqli_num_rows($select_cart);
+            ?>
+            <a href="cart.php"> <i class="fas fa-shopping-cart"></i> <span>(<?php echo $cart_rows_number; ?>)</span> </a>
          </div>
 
          <div style="z-index: 1000;" class="user-box">
