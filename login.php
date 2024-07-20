@@ -66,7 +66,7 @@
          margin-left: 119px;
       }
       .form-container form {
-         height: 415px;
+         height: 354px;
          border: none;
       }
       .title {

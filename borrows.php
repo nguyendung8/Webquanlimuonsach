@@ -54,7 +54,7 @@
    <div class="borrow-container">
 
       <?php
-         $sql = "SELECT borrows.id AS borrow_id, borrows.placed_on, borrows.is_confirmed, books.id AS book_id, borrow_book.quantity, books.name
+         $sql = "SELECT borrows.id AS borrow_id, borrows.placed_on, borrows.pay_day, borrows.borrow_status, books.id AS book_id, borrow_book.quantity, books.name
          FROM borrows
          JOIN borrow_book ON borrows.id = borrow_book.borrow_id
          JOIN books ON borrow_book.book_id = books.id
@@ -67,8 +67,9 @@
             if (!isset($borrows[$borrow_id])) {
                $borrows[$borrow_id] = [
                      'placed_on' => $row['placed_on'],
-                     'is_confirmed' => $row['is_confirmed'],
+                     'borrow_status' => $row['borrow_status'],
                      'quantity' => $row['quantity'],
+                     'pay_day' => $row['pay_day'],
                      'books' => []
                ];
             }
@@ -89,15 +90,25 @@
             }
          ?>
          <p>Ngày mượn: <span><?php echo $borrow['placed_on']; ?></span></p>
+         <?php
+            if($borrow['borrow_status'] == 2){
+         ?>
+         <p>Ngày trả: <span><?php echo $borrow['pay_day']; ?></span> </p>
+         <?php
+            }
+         ?>
          <p> Trạng thái  : 
-            <span style="color:<?php if($borrow['is_confirmed'] == 1){ echo 'green'; }else if($borrow['is_confirmed'] == '0'){ echo 'red'; }else{ echo 'orange'; } ?>;">
-               <?php if ($borrow['is_confirmed'] == 1) {
-                     echo 'Đã duyệt';
-                  } else {
-                     echo 'Chờ xử lý';
-                  }
-               ?>
-            </span> 
+         <span style="color:<?php if($borrow['borrow_status'] == 1){ echo 'green !important'; }else if($borrow['borrow_status'] == '2'){ echo 'orange !important'; }else{ echo '#0022ff !important'; } ?>;">
+            <?php 
+               if ($borrow['borrow_status'] == 1) {
+                  echo 'Đã duyệt';
+               } else if($borrow['borrow_status'] == 2) {
+                  echo 'Đã trả';
+               } else {
+                  echo 'Chờ xử lý';
+               }
+            ?>
+         </span> 
          </p>
          </div>
       <?php
