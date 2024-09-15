@@ -149,7 +149,7 @@
                      $fetch_user = mysqli_query($conn, "SELECT * FROM users WHERE id = $user_id") or die('query failed');
                      $user = mysqli_fetch_assoc($fetch_user);
                   ?>
-                  <p> MSSV : <span><?php echo $user['mssv']; ?></span> </p>
+                  <p> Email : <span><?php echo $user['email']; ?></span> </p>
                   <p> Tên SV: <span><?php echo $user['name']; ?></span></p>
                   <?php
                      foreach ($borrow['books'] as $book) {

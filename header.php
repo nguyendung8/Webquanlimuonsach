@@ -32,7 +32,7 @@
             <a href="list_new_books.php">Sách mới nhất</a>
             <a href="contact.php">Liên hệ</a>
             <a href="borrows.php">Đã mượn</a>
-            <a href="pays.php">Thanh toán</a>
+            <!-- <a href="pays.php">Thanh toán</a> -->
          </nav>
 
          <div class="icons">

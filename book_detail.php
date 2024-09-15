@@ -102,7 +102,13 @@
             </p>
             <p class="bookdetail-author">
                Nhà xuất bản: 
-               <?php echo ($bookItem['publisher']) ?>
+               <?php 
+                  $publish_id = $bookItem['publisher_id'];
+                  $sql = "SELECT * FROM publishs WHERE id = $publish_id";
+                  $result = $conn->query($sql);
+                  $publish = $result->fetch_assoc();
+                  echo $publish['name'];
+               ?>
             </p>
             <p class="bookdetail-author">
                Số lượng còn: 

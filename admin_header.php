@@ -28,6 +28,7 @@
       <nav style="margin-bottom: 0px !important;min-height: unset !important;" class="navbar">
          <a style="text-decoration: none !important;" href="admin_products.php">Sách</a>
          <a style="text-decoration: none !important;" href="admin_category.php">Danh mục sách</a>
+         <a style="text-decoration: none !important;" href="admin_publish.php">Nhà xuất bản</a>
          <a style="text-decoration: none !important;" href="admin_borrows.php">Phiếu mượn</a>
          <a style="text-decoration: none !important;" href="admin_users.php">Người dùng</a></a>
          <a style="text-decoration: none !important;" href="admin_contacts.php">Tin nhắn</a>

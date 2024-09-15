@@ -14,8 +14,8 @@
 
       $name = mysqli_real_escape_string($conn, $_POST['name']);
       $author = mysqli_real_escape_string($conn, $_POST['author']);
-      $publisher = mysqli_real_escape_string($conn, $_POST['publisher']);
-      $category = mysqli_real_escape_string($conn, $_POST['category']);
+      $publisher = $_POST['publisher_id'];
+      $category = $_POST['category'];
       $quantity = $_POST['quantity'];
       $describe = $_POST['describe'];
       $image = $_FILES['image']['name'];
@@ -28,7 +28,7 @@
       if(mysqli_num_rows($select_product_name) > 0){
          $message[] = 'Sách đã tồn tại.';
       }else{//chưa thì thêm mới
-         $add_product_query = mysqli_query($conn, "INSERT INTO `books`(name, author, publisher, cate_id, quantity, describes, image) VALUES('$name', '$author', '$publisher', '$category', '$quantity', '$describe', '$image')") or die('query failed');
+         $add_product_query = mysqli_query($conn, "INSERT INTO `books`(name, author, publisher_id, cate_id, quantity, describes, image) VALUES('$name', '$author', '$publisher', '$category', '$quantity', '$describe', '$image')") or die('query failed');
          if($add_product_query){
             if($image_size > 2000000){//kiểm tra kích thước ảnh
                $message[] = 'Kích tước ảnh quá lớn, hãy cập nhật lại ảnh!';
@@ -110,7 +110,19 @@
       <h3>Thêm sách</h3>
       <input type="text" name="name" class="box" placeholder="Tên sách" required>
       <input type="text" name="author" class="box" placeholder="Tác giả" required>
-      <input type="text" name="publisher" class="box" placeholder="Nhà xuất bản" required>
+      <select name="publisher_id" class="box">
+         <?php
+            $select_publish= mysqli_query($conn, "SELECT * FROM `publishs`") or die('Query failed');
+            if(mysqli_num_rows($select_publish)>0){
+               while($fetch_publish=mysqli_fetch_assoc($select_publish)){
+                  echo "<option value='" . $fetch_publish['id'] . "'>".$fetch_publish['name']."</option>";
+               }
+            }
+            else{
+               echo "<option>Không có nhà xuất bản nào.</option>";
+            }
+         ?>
+      </select>
       <select name="category" class="box">
          <?php
             $select_category= mysqli_query($conn, "SELECT * FROM `categories`") or die('Query failed');

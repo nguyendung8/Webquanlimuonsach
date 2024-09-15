@@ -66,7 +66,7 @@
          while($fetch_users = mysqli_fetch_assoc($select_users)){
       ?>
       <div style="height: -webkit-fill-available;" class="box">
-         <p> Mã số sinh viên : <span><?php echo $fetch_users['mssv']; ?></span> </p>
+         <p> Email : <span><?php echo $fetch_users['email']; ?></span> </p>
          <p> Tên sinh viên : <span><?php echo $fetch_users['name']; ?></span> </p>
       <?php
          if($fetch_users['user_type'] == 'admin'){
