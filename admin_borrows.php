@@ -145,7 +145,7 @@
                <div style="text-align: center; height: -webkit-fill-available;" class="box">
                   <p> Phiếu mượn ID: : <span><?php echo $borrow_id; ?></span> </p>
                   <?php
-                  $user_id = $borrow['user_id'];
+                     $user_id = $borrow['user_id'];
                      $fetch_user = mysqli_query($conn, "SELECT * FROM users WHERE id = $user_id") or die('query failed');
                      $user = mysqli_fetch_assoc($fetch_user);
                   ?>

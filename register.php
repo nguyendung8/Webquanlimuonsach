@@ -179,7 +179,6 @@ if(isset($message)){
    <div class="register-container">
       <div class="form-register-container">
          <h1 class="title">Tạo tài khoản của bạn</h1>
-         <p class="description">Bắt đầu hành trình tìm kiếm cơ hội nghề nghiệp tuyệt vời với hồ sơ nổi bật</p>
          <h3>Đăng ký</h3>
          <form action="" method="post">
                <input type="text" name="name" placeholder="Nhập họ tên" required class="box">
