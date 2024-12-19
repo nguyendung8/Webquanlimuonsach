@@ -118,7 +118,7 @@
                Mô tả vật lý: 
                <?php echo($bookItem['describes'])  ?>
             </p>
-            <a href="book_borrow.php?book_id=<?php echo $bookItem['id'] ?>" class="borrow-book" >Mượn sách</a>
+            <!-- <a href="book_borrow.php?book_id=<?php echo $bookItem['id'] ?>" class="borrow-book" >Mượn sách</a> -->
          </div>
       </div>
    <?php else : ?>

@@ -55,7 +55,7 @@
             <div class="name"><?php echo $fetch_products['name']; ?></div>
             <div class="book-action">
                <a href="book_detail.php?book_id=<?php echo $fetch_products['id'] ?>" class="view-book" >Xem thông tin sách</a>
-               <a href="book_borrow.php?book_id=<?php echo $fetch_products['id'] ?>" class="borrow-book" >Mượn sách</a>
+               <a href="book_borrow.php?book_id=<?php echo $fetch_products['id'] ?>" class="borrow-book" >Thêm vào giỏ</a>
             </div>
          </form>
       <?php
@@ -67,16 +67,6 @@
    </div>
 
 </section>
-
-<!-- <section class="home-contact">
-
-   <div class="content">
-      <h3>Bạn có thắc mắc?</h3>
-      <p>Hãy để lại những điều bạn còn thắc mắc, băn khoăn hay muốn chia sẻ thêm về những quyển sách cho chúng mình tại đây để chúng mình có thể giải đáp giúp bạn</p>
-      <a href="contact.php" class="white-btn">Liên hệ</a>
-   </div>
-
-</section> -->
 
 <?php include 'footer.php'; ?>
 <script src="js/script.js"></script>

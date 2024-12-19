@@ -77,6 +77,8 @@
    <title>Sách</title>
 
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    <link rel="stylesheet" href="css/admin_style.css">
    <style>
       .add-products form {
@@ -90,11 +92,28 @@
       h1, h3 {
          color: #3670EB !important;
       }
-      .btn {
-         background-color: #3670EB;
-      }
       *::-webkit-scrollbar-thumb{
          background-color: #3670EB !important;
+      }
+      th {
+            font-size: 20px;
+            text-align: center;
+      }
+      td {
+         font-size: 18px;
+         padding: 1.5rem 0.5rem !important;
+         text-align: center;
+      }
+      .new-btn {
+         padding: 10px 13px; 
+         text-decoration: none; 
+         font-size: 18px;
+         margin-bottom: 7px;
+         border-radius: 4px;
+      }
+      i {
+         font-size: 15px;
+         margin-right: 3px;
       }
    </style>
 </head>
@@ -146,25 +165,55 @@
 
 <section class="show-products">
 
-   <div class="box-container">
-
-      <?php
-         $select_products = mysqli_query($conn, "SELECT * FROM `books`") or die('query failed');
-         if(mysqli_num_rows($select_products) > 0){
-            while($fetch_products = mysqli_fetch_assoc($select_products)){
-      ?>
-               <div style="height: -webkit-fill-available;" class="box">
-                  <img width="180px" height="207px" src="uploaded_img/<?php echo $fetch_products['image']; ?>" alt="">
-                  <div class="name"><?php echo $fetch_products['name']; ?></div>
-                  <a href="admin_products.php?update=<?php echo $fetch_products['id']; ?>" class="option-btn">Cập nhật</a>
-                  <a href="admin_products.php?delete=<?php echo $fetch_products['id']; ?>" class="delete-btn" onclick="return confirm('Xóa sách này?');">Xóa</a>
-               </div>
-      <?php
-            }
-      }else{
-         echo '<p class="empty">Không có sách nào được thêm!</p>';
-      }
-      ?>
+   <div class="container">
+      <h3 class="title text-center">Danh sách Sách</h3>
+      <table class="table table-striped table-bordered">
+         <thead class="table-primary">
+            <tr>
+               <th>ID</th>
+               <th>Ảnh</th>
+               <th>Tên sách</th>
+               <th>Tác giả</th>
+               <th>Danh mục</th>
+               <th>Số lượng</th>
+               <th>Hành động</th>
+            </tr>
+         </thead>
+         <tbody>
+            <?php
+               $select_products = mysqli_query($conn, "SELECT * FROM `books`") or die('query failed');
+               if(mysqli_num_rows($select_products) > 0){
+                  while($fetch_products = mysqli_fetch_assoc($select_products)){
+            ?>
+            <tr>
+               <td><?php echo $fetch_products['id']; ?></td>
+               <td>
+                  <img src="uploaded_img/<?php echo $fetch_products['image']; ?>" alt="" width="80" height="100">
+               </td>
+               <td><?php echo $fetch_products['name']; ?></td>
+               <td><?php echo $fetch_products['author']; ?></td>
+               <td>
+                  <?php
+                     $cate_id = $fetch_products['cate_id'];
+                     $category_query = mysqli_query($conn, "SELECT cate_name FROM `categories` WHERE id = '$cate_id'") or die('query failed');
+                     $category = mysqli_fetch_assoc($category_query);
+                     echo $category['cate_name'];
+                  ?>
+               </td>
+               <td><?php echo $fetch_products['quantity']; ?></td>
+               <td>
+                  <a href="admin_products.php?update=<?php echo $fetch_products['id']; ?>" class="new-btn btn-warning btn-sm"><i class="fas fa-edit"></i>Cập nhật</a>
+                  <a href="admin_products.php?delete=<?php echo $fetch_products['id']; ?>" class="new-btn btn-danger btn-sm" onclick="return confirm('Xóa sách này?');"> <i class="fas fa-trash"></i>Xóa</a>
+               </td>
+            </tr>
+            <?php
+                  }
+               }else{
+                  echo '<tr><td colspan="8" class="text-center">Không có sách nào được thêm!</td></tr>';
+               }
+            ?>
+         </tbody>
+      </table>
    </div>
 
 </section>

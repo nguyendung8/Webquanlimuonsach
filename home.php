@@ -10,6 +10,41 @@
       header('location:login.php');
    }
 
+   if(isset($_GET['book_id'])) {
+      $book_id = $_GET['book_id'];
+   
+      // Đếm số lượng sách hiện tại của user trong giỏ
+      $count_cart = mysqli_query($conn, "SELECT COUNT(*) as total_books FROM `cart` WHERE user_id = '$user_id'");
+      $row = mysqli_fetch_assoc($count_cart);
+      $total_books = $row['total_books'];
+   
+      // Kiểm tra nếu đã đạt giới hạn 5 sách
+      if($total_books >= 5) {
+         $message[] = 'Bạn chỉ được mượn tối đa 5 sách!';
+      } else {
+         // Lấy thông tin sách từ bảng `books`
+         $select_book = mysqli_query($conn, "SELECT * FROM `books` WHERE id = '$book_id' AND quantity > 0");
+         if(mysqli_num_rows($select_book) > 0) {
+            $book = mysqli_fetch_assoc($select_book);
+            $book_name = $book['name'];
+            $book_image = $book['image'];
+   
+            // Kiểm tra sách đã tồn tại trong giỏ của user chưa
+            $check_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE book_id = '$book_id' AND user_id = '$user_id'");
+            if(mysqli_num_rows($check_cart) > 0) {
+               $message[] = 'Sách này đã có trong giỏ của bạn!';
+            } else {
+               // Thêm sách vào bảng `cart`
+               mysqli_query($conn, "INSERT INTO `cart` (book_id, user_id, name, quantity, image) 
+                                    VALUES ('$book_id', '$user_id', '$book_name', '1', '$book_image')") or die('query failed');
+               $message[] = 'Sách đã được thêm vào giỏ của bạn!';
+            }
+         } else {
+            $message[] = 'Mượn sách thất bại Sách này không tồn tại hoặc đã hết số lượng!!';
+         }
+      }
+   }
+
 ?>
 
 <!DOCTYPE html>
@@ -93,22 +128,6 @@
 
 <section class="home">
 
-   <div class="content">
-      <div class="slideshow-container">
-         <div class="slide fade">
-            <img src="./images/slider1.png" alt="slide 1">
-         </div>
-         <div class="slide fade">
-            <img src="./images/slider2.png" alt="slide 2">
-         </div>
-         <div class="slide fade">
-            <img src="./images/slider3.jpg" alt="slide 3">
-         </div>
-         <div class="slide fade">
-            <img src="./images/slider4.jpg" alt="slide 3">
-         </div>
-      </div>
-   </div>
 
 </section>
 
@@ -134,7 +153,7 @@
       if(isset($_GET['cate_id'])) {
          $cate_id = $_GET['cate_id'];
       } else {
-         $cate_id =6;
+         $cate_id = 11;
       }
          $select_products = mysqli_query($conn, "SELECT b.* FROM books b JOIN categories c ON b.cate_id = c.id  WHERE cate_id = $cate_id AND b.quantity > 0") or die('query failed');
          if(mysqli_num_rows($select_products) > 0){
@@ -145,7 +164,7 @@
             <div class="name"><?php echo $fetch_products['name']; ?></div>
             <div class="book-action">
                <a href="book_detail.php?book_id=<?php echo $fetch_products['id'] ?>" class="view-book" >Xem thông tin sách</a>
-               <a href="book_borrow.php?book_id=<?php echo $fetch_products['id'] ?>" class="borrow-book" >Mượn sách</a>
+               <a href="home.php?book_id=<?php echo $fetch_products['id'] ?>" class="borrow-book" >Thêm vào giỏ</a>
             </div>
          </form>
       <?php

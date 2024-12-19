@@ -1,59 +1,64 @@
 <?php
-
    include 'config.php';
 
    session_start();
 
-   $user_id = $_SESSION['user_id']; //tạo session người dùng thường
+   $user_id = $_SESSION['user_id']; // Tạo session người dùng thường
 
-   if(!isset($user_id)){// session không tồn tại => quay lại trang đăng nhập
+   if (!isset($user_id)) { // Session không tồn tại => quay lại trang đăng nhập
       header('location:login.php');
    }
 
-   if(isset($_POST['update_cart'])){//cập nhật giỏ hàng từ form submit name='update_cart'
-      $cart_id = $_POST['cart_id'];
-      $cart_quantity = $_POST['cart_quantity'];
-      mysqli_query($conn, "UPDATE `cart` SET quantity = '$cart_quantity' WHERE id = '$cart_id'") or die('query failed');
-      $message[] = 'Giỏ đã được cập nhật!';
-   }
-
-   if(isset($_GET['delete'])){//xóa sách khỏi giỏ hàng từ onclick href='delete'
+   // Xóa sách khỏi giỏ hàng
+   if (isset($_GET['delete'])) {
       $delete_id = $_GET['delete'];
-      mysqli_query($conn, "DELETE FROM `cart` WHERE id = '$delete_id'") or die('query failed');
+      mysqli_query($conn, "DELETE FROM `cart` WHERE id = '$delete_id' AND user_id = '$user_id'") or die('query failed');
       header('location:cart.php');
    }
 
-   if(isset($_GET['delete_all'])){//xóa tất cả sách khỏi giỏ hàng của người dùng từ onclick href='delete_all'
+   // Xóa tất cả sách trong giỏ hàng
+   if (isset($_GET['clear'])) {
       mysqli_query($conn, "DELETE FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
       header('location:cart.php');
    }
 
-   if(isset($_POST['submit'])) { // Người dùng click mượn
-      // Lấy ra tất cả sách mà người dùng đã thêm vào giỏ
-      $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-      $cart_items = mysqli_fetch_all($select_cart, MYSQLI_ASSOC);
-      $placed_on = date('d-m-Y');
-      $count_cart = mysqli_num_rows($select_cart);
-      if(!empty($count_cart)) {
-
-         mysqli_query($conn, "INSERT INTO `borrows` (user_id, placed_on) VALUES ('$user_id', '$placed_on')") or die('query failed');
-
-         // Lấy ra borrow_id vừa tạo
-         $borrow_id = mysqli_insert_id($conn);
-
-         foreach ($cart_items as $item) {
-            $book_id = $item['book_id'];
-            $quantity = $item['quantity'];
-               mysqli_query($conn, "INSERT INTO `borrow_book` (quantity, book_id, borrow_id) VALUES ('$quantity', '$book_id', '$borrow_id')") or die('query failed');
-         }
-         // Xóa các sách khỏi giỏ hàng
-         mysqli_query($conn, "DELETE FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-         $message[] = 'Mượn sách thành công!';
-      } else {
-         $message[] = 'Giỏ của bạn trống!';
-      }
-   }
-
+    // Xử lý khi người dùng xác nhận mượn sách
+    if (isset($_POST['borrow_books'])) {
+        $borrow_deadline = $_POST['borrow_deadline'];
+        $placed_on = date("Y-m-d");
+  
+        // Thêm phiếu mượn vào bảng borrows
+        $insert_borrow = mysqli_query($conn, "INSERT INTO `borrows` (user_id, placed_on, borrow_deadline) VALUES ('$user_id', '$placed_on', '$borrow_deadline')") or die('query failed');
+        $borrow_id = mysqli_insert_id($conn); // Lấy id của phiếu mượn vừa tạo
+  
+        // Thêm sách vào bảng borrow_book
+        $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
+        while ($fetch_cart = mysqli_fetch_assoc($cart_query)) {
+           $book_id = $fetch_cart['book_id'];
+           $quantity = $fetch_cart['quantity'];
+  
+           // Kiểm tra số lượng sách còn lại trong kho
+           $book_query = mysqli_query($conn, "SELECT quantity FROM `books` WHERE id = '$book_id'") or die('query failed');
+           $fetch_book = mysqli_fetch_assoc($book_query);
+           $available_quantity = $fetch_book['quantity'];
+  
+           if ($quantity <= $available_quantity) {
+              // Cập nhật bảng borrow_book
+              mysqli_query($conn, "INSERT INTO `borrow_book` (book_id, borrow_id, quantity) VALUES ('$book_id', '$borrow_id', '$quantity')") or die('query failed');
+  
+              // Giảm số lượng sách trong bảng books
+            //   mysqli_query($conn, "UPDATE `books` SET quantity = quantity - '$quantity' WHERE id = '$book_id'") or die('query failed');
+           } else {
+              $message[] = 'Số lượng sách không đủ để mượn!';
+              exit;
+           }
+        }
+  
+        // Xóa sách khỏi giỏ hàng sau khi mượn
+        mysqli_query($conn, "DELETE FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
+        $message[] = 'Mượn sách thành công!';
+        header('location:cart.php');
+     }
 ?>
 
 <!DOCTYPE html>
@@ -62,84 +67,149 @@
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Giỏ</title>
-
+   <title>Giỏ Hàng</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    <link rel="stylesheet" href="css/style.css">
+   <link rel="stylesheet" href="css/main.css">
    <style>
-      .head {
-         background: url(./images/home-about.jpg) no-repeat;
-         background-size: cover;
-         background-position: center;
+    .cart-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    a {
+        text-decoration: none !important;
+    }
+      .table {
+         width: 100%;
+         border-collapse: collapse;
       }
-      .del-btn {
-         height: 2.5rem !important;
-         width: 2.5rem !important;
-         line-height: 2.5rem !important;
+      .table th, .table td {
+         border: 1px solid #ddd;
+         padding: 10px;
+         text-align: center;
       }
-      .borrow-btn {
-         background-color: #0900ff;
+      .table th {
+         background-color: #3670EB;
          color: #fff;
       }
-      .borrow-btn:hover {
-         background-color: #0900ff !important;
-         opacity: 0.7;
+      .table img {
+         width: 70px;
+         height: 100px;
+      }
+      .action-btn:hover {
+        color: #fff !important;
+        background-color: #D93A2C;
+      }
+      .clear-btn {
+         display: inline-block;
+         margin: 10px 0;
+         background-color: #FF4136;
+         color: white;
+         padding: 8px 15px;
+         text-decoration: none;
+         border-radius: 5px;
+      }
+      .clear-btn:hover {
+         background-color: #D93A2C;
          color: #fff !important;
+      }
+      th {
+           font-size: 20px;
+            text-align: center;
+      }
+      td {
+         font-size: 18px;
+         padding: 1.5rem 0.5rem !important;
+         text-align: center;
+      }
+      .new-btn {
+         padding: 10px 13px; 
+         text-decoration: none; 
+         font-size: 18px;
+         margin-bottom: 7px;
+         border-radius: 4px;
       }
    </style>
 </head>
 <body>
-   
+
 <?php include 'header.php'; ?>
 
-<section class="shopping-cart">
+<section class="cart">
+   <h1 class="title">Giỏ Hàng Của Bạn</h1>
 
-   <h1 class="title">Sách đã được thêm vào giỏ</h1>
-
-   <div class="box-container">
-      <?php
-         $grand_total = 0;
-         $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');//lấy ra giỏ hàng tương ứng với id người dùng
-         $count_cart = mysqli_num_rows($select_cart);
-         if(mysqli_num_rows($select_cart) > 0){
-            while($fetch_cart = mysqli_fetch_assoc($select_cart)){ 
-               $name_product = $fetch_cart['name'];
-               $select_quantity = mysqli_query($conn, "SELECT * FROM `books` WHERE name='$name_product'");
-               $fetch_quantity = mysqli_fetch_assoc($select_quantity); 
-      ?>
-               <div style="height: -webkit-fill-available;" class="box">
-                  <a href="cart.php?delete=<?php echo $fetch_cart['id']; ?>" class="del-btn fas fa-times" onclick="return confirm('Xóa sách này khỏi giỏ?');"></a>
-                  <img width="207px" style="height: 224px !important" src="uploaded_img/<?php echo $fetch_cart['image']; ?>" alt="">
-                  <div class="name"><?php echo $fetch_cart['name']; ?></div>
-                  <form action="" method="post">
-                     <input type="hidden" name="cart_id" value="<?php echo $fetch_cart['id']; ?>">
-                     <input type="number" min="1" max="<?=$fetch_quantity['quantity']?>" name="cart_quantity" value="<?php echo $fetch_cart['quantity']; ?>">
-                     <input type="submit" name="update_cart" value="Cập nhật" class="option-btn">
-                  </form>
-               </div>
-      <?php
-            }
-         }else{
-            echo '<p class="empty">Giỏ của bạn trống!</p>';
-         }
-      ?>
+   <div class="table-container">
+      <table class="table">
+         <thead>
+            <tr>
+               <th>ID</th>
+               <th>Hình Ảnh</th>
+               <th>Tên Sách</th>
+               <th>Số Lượng</th>
+               <th>Thao Tác</th>
+            </tr>
+         </thead>
+         <tbody>
+            <?php
+               $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
+               if (mysqli_num_rows($select_cart) > 0) {
+                  while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
+            ?>
+            <tr>
+               <td><?php echo $fetch_cart['id']; ?></td>
+               <td><img src="uploaded_img/<?php echo $fetch_cart['image']; ?>" alt="Book"></td>
+               <td><?php echo htmlspecialchars($fetch_cart['name']); ?></td>
+               <td><?php echo $fetch_cart['quantity']; ?></td>
+               <td>
+                  <a href="cart.php?delete=<?php echo $fetch_cart['id']; ?>" class="new-btn btn-danger action-btn" onclick="return confirm('Xóa sách này khỏi giỏ hàng?');">
+                     Xóa
+                  </a>
+               </td>
+            </tr>
+            <?php
+                  }
+               } else {
+                  echo '<tr><td colspan="5">Giỏ hàng của bạn đang trống!</td></tr>';
+               }
+            ?>
+         </tbody>
+      </table>
    </div>
 
-   <div style="margin-top: 2rem; text-align:center;">
-      <a href="cart.php?delete_all" class="delete-btn" onclick="return confirm('Xóa tất cả giỏ?');">Xóa tất cả</a>
-   </div>
+    
 
-   <form method="post" class="cart-total">
-      <div class="flex">
-         <a href="home.php" class="option-btn">Tiếp tục chọn sách</a>
-         <input type="submit" name="submit" class="btn borrow-btn" value="Mượn">
+   <!-- Modal nhập thông tin phiếu mượn -->
+   <div class="modal fade" id="borrowModal" tabindex="-1" aria-labelledby="borrowModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title fs-2" id="borrowModalLabel">Phiếu Mượn Sách</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <form action="cart.php" method="post">
+                  <div class="mb-3">
+                     <label for="borrow_deadline" class="form- fs-3">Ngày hẹn trả</label>
+                     <input type="date" class="form-control fs-3" id="borrow_deadline" name="borrow_deadline" required>
+                  </div>
+                  <button type="submit" name="borrow_books" class="fs-4 new-btn btn-primary">Xác Nhận Mượn</button>
+               </form>
+            </div>
+         </div>
       </div>
-   </form>
+   </div>
 
+   <!-- Nút mượn sách -->
+   <div class="cart-btn">
+      <button class="new-btn btn-success btn-success" data-bs-toggle="modal" data-bs-target="#borrowModal">Mượn Sách</button>
+      <a href="cart.php?clear" class="fs-2 clear-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa tất cả sách trong giỏ hàng không?');">Xóa tất cả</a>
+   </div>
 </section>
 
 <?php include 'footer.php'; ?>
-
 <script src="js/script.js"></script>
 
 </body>

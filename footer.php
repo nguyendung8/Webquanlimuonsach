@@ -19,9 +19,9 @@
 
       <div class="box">
          <h3>Liên lạc</h3>
-         <p> <i style="color: #3670EB !important;" class="fas fa-phone"></i> +84 983751738 </p>
-         <p> <i style="color: #3670EB !important;" class="fas fa-phone"></i> +84 573192751 </p>
-         <p> <i style="color: #3670EB !important;" class="fas fa-envelope"></i> hutechlibrary@gmail.com </p>
+         <p> <i style="color: #3670EB !important;" class="fas fa-phone"></i> +84 333201594 </p>
+         <p> <i style="color: #3670EB !important;" class="fas fa-phone"></i> +84 354330617 </p>
+         <p> <i style="color: #3670EB !important;" class="fas fa-envelope"></i> Tiennam@gmail.com </p>
       </div>
 
       <div class="box">

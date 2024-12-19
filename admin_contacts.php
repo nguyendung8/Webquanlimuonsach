@@ -27,6 +27,8 @@
    <title>Tin nhắn</title>
 
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    <link rel="stylesheet" href="css/admin_style.css">
    <style>
       .messages .box-container .box p span {
@@ -39,6 +41,26 @@
       h1, h3 {
          color: #3670EB !important;
       }
+      th {
+           font-size: 20px;
+            text-align: center;
+      }
+      td {
+         font-size: 18px;
+         padding: 1.5rem 0.5rem !important;
+         text-align: center;
+      }
+      .new-btn {
+         padding: 10px 13px; 
+         text-decoration: none; 
+         font-size: 18px;
+         margin-bottom: 7px;
+         border-radius: 4px;
+      }
+      i  {
+         font-size: 15px;
+         margin-right: 3px;
+      }
    </style>
 </head>
 <body>
@@ -46,33 +68,52 @@
 <?php include 'admin_header.php'; ?>
 
 <section class="messages">
-
-   <h1 class="title"> Tin nhắn </h1>
-
-   <div class="box-container">
-   <?php
-      $select_message = mysqli_query($conn, "SELECT * FROM `message`") or die('query failed');
-      if(mysqli_num_rows($select_message) > 0){
-         while($fetch_message = mysqli_fetch_assoc($select_message)){
-      
-   ?>
-   <div class="box">
-      <p> Id người dùng : <span><?php echo $fetch_message['user_id']; ?></span> </p>
-      <p> Tên : <span><?php echo $fetch_message['name']; ?></span> </p>
-      <!-- <p> Số điện thoại : <span><?php echo $fetch_message['number']; ?></span> </p> -->
-      <p> Email : <span><?php echo $fetch_message['email']; ?></span> </p>
-      <p> Tin nhắn : <span><?php echo $fetch_message['message']; ?></span> </p>
-      <a href="admin_contacts.php?delete=<?php echo $fetch_message['id']; ?>" onclick="return confirm('delete this message?');" class="delete-btn">Xóa tin nhắn</a>
+   <div class="container">
+      <h1 class="title text-center my-4">Danh Sách Tin Nhắn</h1>
+      <div class="table-responsive">
+         <table class="table table-bordered table-striped text-center">
+            <thead class="table-primary">
+               <tr>
+                  <th>ID</th>
+                  <th>ID Người Dùng</th>
+                  <th>Tên</th>
+                  <th>Email</th>
+                  <th>Tin Nhắn</th>
+                  <th>Thao Tác</th>
+               </tr>
+            </thead>
+            <tbody>
+               <?php
+                  $select_message = mysqli_query($conn, "SELECT * FROM `message`") or die('query failed');
+                  if(mysqli_num_rows($select_message) > 0){
+                     while($fetch_message = mysqli_fetch_assoc($select_message)){
+               ?>
+               <tr>
+                  <td><?php echo $fetch_message['id']; ?></td>
+                  <td><?php echo htmlspecialchars($fetch_message['user_id']); ?></td>
+                  <td><?php echo htmlspecialchars($fetch_message['name']); ?></td>
+                  <td><?php echo htmlspecialchars($fetch_message['email']); ?></td>
+                  <td><?php echo nl2br(htmlspecialchars($fetch_message['message'])); ?></td>
+                  <td>
+                     <a href="admin_contacts.php?delete=<?php echo $fetch_message['id']; ?>" 
+                        onclick="return confirm('Xóa tin nhắn này?');" 
+                        class="new-btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                     </a>
+                  </td>
+               </tr>
+               <?php
+                     }
+                  } else {
+                     echo '<tr><td colspan="6" class="text-center">Không có tin nhắn nào!</td></tr>';
+                  }
+               ?>
+            </tbody>
+         </table>
+      </div>
    </div>
-   <?php
-      };
-   }else{
-      echo '<p class="empty">Bạn không có tin nhắn nào!</p>';
-   }
-   ?>
-   </div>
-
 </section>
+
 
 <script src="js/admin_script.js"></script>
 

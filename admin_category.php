@@ -63,6 +63,8 @@
    <title>Danh mục sách</title>
 
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    <link rel="stylesheet" href="css/admin_style.css">
    <style>
       .add-products form {
@@ -82,6 +84,26 @@
       *::-webkit-scrollbar-thumb{
          background-color: unset !important;
       }
+      th {
+            font-size: 20px;
+            text-align: center;
+      }
+      td {
+         font-size: 18px;
+         padding: 1.5rem 0.5rem !important;
+         text-align: center;
+      }
+      .new-btn {
+         padding: 10px 13px; 
+         text-decoration: none; 
+         font-size: 18px;
+         margin-bottom: 7px;
+         border-radius: 4px;
+      }
+      i {
+         font-size: 15px;
+         margin-right: 3px;
+      }
    </style>
 </head>
 <body>
@@ -100,28 +122,47 @@
 </section>
 
 <section class="show-products">
-
-   <div class="box-container">
-
-      <?php
-         $select_categorys = mysqli_query($conn, "SELECT * FROM `categories`") or die('query failed');
-         if(mysqli_num_rows($select_categorys) > 0){
-            while($fetch_categorys = mysqli_fetch_assoc($select_categorys)){
-      ?>
-      <div style="height: -webkit-fill-available;" class="box">
-         <div class="name"><?php echo $fetch_categorys['cate_name']; ?></div>
-         <a href="admin_category.php?update=<?php echo $fetch_categorys['id']; ?>" class="option-btn">Cập nhật</a>
-         <a href="admin_category.php?delete=<?php echo $fetch_categorys['id']; ?>" class="delete-btn" onclick="return confirm('Xóa danh mục này?');">Xóa</a>
+   <div class="container">
+      <h3 class="text-center my-4">Danh sách Danh mục Sách</h3>
+      <div class="table-responsive">
+         <table class="table table-bordered table-striped text-center">
+            <thead class="table-primary">
+               <tr>
+                  <th>ID</th>
+                  <th>Tên danh mục</th>
+                  <th>Thao tác</th>
+               </tr>
+            </thead>
+            <tbody>
+               <?php
+                  $select_categorys = mysqli_query($conn, "SELECT * FROM `categories`") or die('query failed');
+                  if(mysqli_num_rows($select_categorys) > 0){
+                     while($fetch_categorys = mysqli_fetch_assoc($select_categorys)){
+               ?>
+               <tr>
+                  <td><?php echo $fetch_categorys['id']; ?></td>
+                  <td><?php echo $fetch_categorys['cate_name']; ?></td>
+                  <td>
+                     <a style="margin-right: 5px;" href="admin_category.php?update=<?php echo $fetch_categorys['id']; ?>" class="new-btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Cập nhật
+                     </a>
+                     <a href="admin_category.php?delete=<?php echo $fetch_categorys['id']; ?>" class="new-btn btn-danger btn-sm" onclick="return confirm('Xóa danh mục này?');">
+                        <i class="fas fa-trash"></i> Xóa
+                     </a>
+                  </td>
+               </tr>
+               <?php
+                     }
+                  }else{
+                     echo '<tr><td colspan="3" class="text-center">Không có thể loại sách nào được thêm!</td></tr>';
+                  }
+               ?>
+            </tbody>
+         </table>
       </div>
-      <?php
-         }
-      }else{
-         echo '<p class="empty">Không có thể loại sách nào được thêm!</p>';  
-      }
-      ?>
    </div>
-
 </section>
+
 
 <section class="edit-product-form">
 

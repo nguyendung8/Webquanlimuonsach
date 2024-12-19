@@ -1,74 +1,56 @@
 <?php
+include 'config.php';
+session_start();
 
-   include 'config.php';
+// Kiểm tra admin đăng nhập
+$admin_id = $_SESSION['admin_id'];
+if (!isset($admin_id)) {
+    header('location:login.php');
+    exit();
+}
 
-   session_start();
+// Xử lý duyệt phiếu
+if (isset($_POST['confirmed'])) {
+    $borrow_id = $_POST['borrow_id'];
 
-   $admin_id = $_SESSION['admin_id']; //tạo session admin
+    // Giảm số lượng sách khi duyệt phiếu
+    $query = "SELECT book_id, quantity FROM borrow_book WHERE borrow_id = '$borrow_id'";
+    $result = mysqli_query($conn, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $book_id = $row['book_id'];
+        $borrowed_quantity = $row['quantity'];
+        mysqli_query($conn, "UPDATE books SET quantity = quantity - $borrowed_quantity WHERE id = '$book_id'");
+    }
 
-   if(!isset($admin_id)){// session không tồn tại => quay lại trang đăng nhập
-      header('location:login.php');
-   };
-   
-   // Click duyệt
-   if(isset($_POST['confirmed'])) {
-      $borrow_id = $_POST['borrow_id'];
+    mysqli_query($conn, "UPDATE borrows SET borrow_status = 1 WHERE id = '$borrow_id'");
+    $message[] = "Duyệt phiếu mượn thành công!";
+}
 
-      // Truy vấn để lấy thông tin sách trong phiếu mượn
-      $sql = "SELECT book_id, quantity FROM borrow_book WHERE borrow_id = '$borrow_id'";
-      $result = mysqli_query($conn, $sql) or die('query failed');
+// Xử lý trả sách
+if (isset($_POST['returned'])) {
+    $borrow_id = $_POST['borrow_id'];
+    $pay_day = date('Y-m-d');
 
-      while ($row = mysqli_fetch_assoc($result)) {
-         $book_id = $row['book_id'];
-         $borrowed_quantity = $row['quantity'];
- 
-         // Cập nhật số lượng sách trong bảng books
-         $update_sql = "UPDATE books SET quantity = quantity - $borrowed_quantity WHERE id = '$book_id'";
-         mysqli_query($conn, $update_sql) or die('query failed');
+    // Cộng lại số lượng sách
+    $query = "SELECT book_id, quantity FROM borrow_book WHERE borrow_id = '$borrow_id'";
+    $result = mysqli_query($conn, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $book_id = $row['book_id'];
+        $borrowed_quantity = $row['quantity'];
+        mysqli_query($conn, "UPDATE books SET quantity = quantity + $borrowed_quantity WHERE id = '$book_id'");
+    }
 
-         // Cập nhật trạng thái phiếu mượn
-         $update_sql = "UPDATE borrows SET borrow_status = 1 WHERE id = '$borrow_id'";
-         mysqli_query($conn, $update_sql) or die('query failed');
-      }
-   
-      $message[] = 'Duyệt sách thành công!';
-   }
+    mysqli_query($conn, "UPDATE borrows SET borrow_status = 2, pay_day = '$pay_day' WHERE id = '$borrow_id'");
+    $message[] = "Sách đã được trả thành công!";
+}
 
-   // Click trả sách
-   if (isset($_POST['returned'])) {
-      $borrow_id = $_POST['borrow_id'];
-      $pay_day = date('d-m-Y');
-  
-      // Truy vấn để lấy thông tin sách trong phiếu mượn
-      $sql = "SELECT book_id, quantity FROM borrow_book WHERE borrow_id = '$borrow_id'";
-      $result = mysqli_query($conn, $sql) or die('query failed');
-  
-      while ($row = mysqli_fetch_assoc($result)) {
-          $book_id = $row['book_id'];
-          $borrowed_quantity = $row['quantity'];
-  
-          // Cập nhật số lượng sách trong bảng books
-          $update_sql = "UPDATE books SET quantity = quantity + $borrowed_quantity WHERE id = '$book_id'";
-          mysqli_query($conn, $update_sql) or die('query failed');
-      }
-  
-      // Cập nhật trạng thái phiếu mượn là đã trả
-      $update_borrow_sql = "UPDATE borrows SET borrow_status = 2, pay_day = '$pay_day' WHERE id = '$borrow_id'";
-      mysqli_query($conn, $update_borrow_sql) or die('query failed');
-  
-      $message[] = 'Sách đã được trả thành công!';
-   }
-
-   // Click xóa phiếu mượn
-   if (isset($_POST['delete-borrow'])) {
-      $borrow_id = $_POST['borrow_id'];
-      // Xóa phiếu mượn
-      $delete_borrow_sql = "DELETE FROM borrows WHERE id = '$borrow_id'";
-      mysqli_query($conn, $delete_borrow_sql) or die('query failed');
-  
-      $message[] = 'Xóa phiếu mượn thành công!';
-   }
-
+// Xử lý xóa phiếu mượn
+if (isset($_POST['delete-borrow'])) {
+    $borrow_id = $_POST['borrow_id'];
+    mysqli_query($conn, "DELETE FROM borrow_book WHERE borrow_id = '$borrow_id'");
+    mysqli_query($conn, "DELETE FROM borrows WHERE id = '$borrow_id'");
+    $message[] = "Xóa phiếu mượn thành công!";
+}
 ?>
 
 <!DOCTYPE html>
@@ -80,6 +62,8 @@
    <title>Phiếu mượn</title>
 
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    <link rel="stylesheet" href="css/admin_style.css">
 
    <style>
@@ -104,6 +88,26 @@
       .orders .box-container .box p span {
          color: #3670EB !important;
       }
+      th {
+           font-size: 20px;
+            text-align: center;
+      }
+      td {
+         font-size: 18px;
+         padding: 1.5rem 0.5rem !important;
+         text-align: center;
+      }
+      .new-btn {
+         padding: 10px 13px; 
+         text-decoration: none; 
+         font-size: 18px;
+         margin-bottom: 7px;
+         border-radius: 4px;
+      }
+      i  {
+         font-size: 15px;
+         margin-right: 3px;
+      }
    </style>
 </head>
 <body>
@@ -111,105 +115,85 @@
 <?php include 'admin_header.php'; ?>
 
 <section class="orders">
+   <div class="container mt-4">
+    <h2 class="mb-4 text-primary text-center fs-1">Danh Sách Phiếu Mượn</h2>
 
-   <h1 class="title">Phiếu mượn</h1>
-   <div class="box-container">
-      <?php
-         $sql = "SELECT borrows.user_id, borrows.id AS borrow_id, borrows.placed_on, borrows.pay_day, books.id AS book_id, books.name, borrow_book.quantity, borrows.borrow_status
-         FROM borrows
-         JOIN borrow_book ON borrows.id = borrow_book.borrow_id
-         JOIN books ON borrow_book.book_id = books.id
-         ORDER BY borrows.placed_on DESC";
-         $result = mysqli_query($conn, $sql) or die('query failed');
-         $borrows = [];
-         while ($row = mysqli_fetch_assoc($result)) {
-            $borrow_id = $row['borrow_id'];
-            if (!isset($borrows[$borrow_id])) {
-               $borrows[$borrow_id] = [
-                     'placed_on' => $row['placed_on'],
-                     'user_id' => $row['user_id'],
-                     'quantity' => $row['quantity'],
-                     'borrow_status' => $row['borrow_status'],
-                     'pay_day' => $row['pay_day'],
-                     'books' => []
-               ];
-            }
-            $borrows[$borrow_id]['books'][] = [
-               'book_id' => $row['book_id'],
-               'name' => $row['name'],
-            ];
-         }
-         if(!empty($borrows)){
-            foreach ($borrows as $borrow_id => $borrow) {
-               ?>
-               <div style="text-align: center; height: -webkit-fill-available;" class="box">
-                  <p> Phiếu mượn ID: : <span><?php echo $borrow_id; ?></span> </p>
-                  <?php
-                     $user_id = $borrow['user_id'];
-                     $fetch_user = mysqli_query($conn, "SELECT * FROM users WHERE id = $user_id") or die('query failed');
-                     $user = mysqli_fetch_assoc($fetch_user);
-                  ?>
-                  <p> Email : <span><?php echo $user['email']; ?></span> </p>
-                  <p> Tên SV: <span><?php echo $user['name']; ?></span></p>
-                  <?php
-                     foreach ($borrow['books'] as $book) {
-                        echo "<p>" . " Tên sách: " . $book['name']  . " - " . "Số lượng: " . $borrow['quantity'] . "</p>"  . "<br>";
-                     }
-                  ?>
-                  <p>Ngày mượn: <span><?php echo $borrow['placed_on']; ?></span></p>
-                  <?php
-                     if($borrow['borrow_status'] == 2){
-                  ?>
-                  <p>Ngày trả: <span><?php echo $borrow['pay_day']; ?></span> </p>
-                  <?php
-                     }
-                  ?>
-                  <p style="margin-top: 10px;"> Trạng thái  : 
-                     <span style="color:<?php if($borrow['borrow_status'] == 1){ echo 'green !important'; }else if($borrow['borrow_status'] == '2'){ echo 'orange !important'; }else{ echo '#0022ff !important'; } ?>;">
-                        <?php 
-                           if ($borrow['borrow_status'] == 1) {
-                              echo 'Đã duyệt';
-                           } else if($borrow['borrow_status'] == 2) {
-                              echo 'Đã trả';
-                           } else {
-                              echo 'Chờ xử lý';
-                           }
-                        ?>
-                     </span> 
-                  </p>
-                     <?php
-                     if($borrow['borrow_status'] == 0) {            
-                     ?>
-                        <form action="" method="post">
-                           <input type="hidden" name="borrow_id" value="<?php echo $borrow_id ?>">
-                           <input style= "background: #0022ff" class="confirm-btn" type="submit" value=" <?php echo 'Duyệt';  ?>" name="confirmed" >
-                        </form>
-                     <?php
-                        } else if($borrow['borrow_status'] == 1) {
-                     ?>
-                        <form action="" method="post">
-                           <input type="hidden" name="borrow_id" value="<?php echo $borrow_id ?>">
-                           <input style= "background: #12c811c7" class="confirm-btn" type="submit" value=" <?php echo 'Trả sách';  ?>" name="returned" >
-                        </form>
-                     <?php
-                        } else  {
-                     ?>
-                        <form action="" method="post">
-                           <input type="hidden" name="borrow_id" value="<?php echo $borrow_id ?>">
-                           <input style= "background: red " class="confirm-btn" type="submit" value=" <?php echo 'Xóa phiếu';  ?>" name="delete-borrow" >
-                        </form>
-                     <?php
-                        }
-                     ?>
-               </div>
-      <?php
-            }
-         }else{
-            echo '<p class="empty">Không có phiếu mượn nào!</p>';
-         }
-      ?>
-   </div>
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-primary">
+            <tr>
+               <th>ID Phiếu</th>
+               <th>Tên Người Mượn</th>
+               <!-- <th>Email</th> -->
+               <th>Tên Sách (Số Lượng)</th>
+               <th>Ngày Mượn</th>
+               <th>Hạn Trả</th>
+               <th>Trạng Thái</th>
+               <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Query lấy dữ liệu phiếu mượn và gộp các sách thành 1 ô
+            $query = "SELECT 
+                        borrows.id AS borrow_id, 
+                        borrows.user_id, 
+                        borrows.placed_on, 
+                        borrows.borrow_deadline, 
+                        borrows.borrow_status, 
+                        GROUP_CONCAT(CONCAT(books.name, ' (', borrow_book.quantity, ')') SEPARATOR ', ') AS book_list,
+                        users.name AS user_name, 
+                        users.email
+                      FROM borrows
+                      JOIN borrow_book ON borrows.id = borrow_book.borrow_id
+                      JOIN books ON borrow_book.book_id = books.id
+                      JOIN users ON borrows.user_id = users.id
+                      GROUP BY borrows.id
+                      ORDER BY borrows.placed_on DESC";
+            $result = mysqli_query($conn, $query);
 
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    ?>
+                    <tr>
+                        <td><?php echo $row['borrow_id']; ?></td>
+                        <td><?php echo $row['user_name']; ?></td>
+                        <!-- <td><?php echo $row['email']; ?></td> -->
+                        <td><?php echo $row['book_list']; ?></td>
+                        <td><?php echo $row['placed_on']; ?></td>
+                        <td><?php echo $row['borrow_deadline']; ?></td>
+                        <td>
+                            <?php 
+                                if ($row['borrow_status'] == 1) {
+                                    echo '<span class="badge bg-success">Đã duyệt</span>';
+                                } elseif ($row['borrow_status'] == 2) {
+                                    echo '<span class="badge bg-warning text-dark">Đã trả</span>';
+                                } else {
+                                    echo '<span class="badge bg-info">Chờ xử lý</span>';
+                                }
+                            ?>
+                        </td>
+                        <td>
+                            <form method="POST" class="d-inline">
+                                <input type="hidden" name="borrow_id" value="<?php echo $row['borrow_id']; ?>">
+                                <?php if ($row['borrow_status'] == 0) : ?>
+                                    <button type="submit" name="confirmed" class="new-btn btn-primary btn-sm">Duyệt</button>
+                                <?php elseif ($row['borrow_status'] == 1) : ?>
+                                    <button type="submit" name="returned" class="new-btn btn-success btn-sm">Trả sách</button>
+                                <?php else : ?>
+                                    <button type="submit" name="delete-borrow" class="new-btn btn-danger btn-sm">Xóa</button>
+                                <?php endif; ?>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php
+                }
+            } else {
+                echo '<tr><td colspan="8" class="text-danger">Không có phiếu mượn nào!</td></tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
 </section>
 
 <script src="js/admin_script.js"></script>
